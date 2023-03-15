@@ -1,7 +1,7 @@
 package com.gymtracker.user;
 
-public class UserLoginDtoMapper {
-    public static UserLoginDto map(User user) {
+public class UserLoginMapper {
+    public static UserLoginDto toEntity(User user) {
         return new UserLoginDto(user.getLogin(), user.getPassword());
     }
 }

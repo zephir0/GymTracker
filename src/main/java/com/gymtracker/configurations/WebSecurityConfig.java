@@ -16,11 +16,12 @@ import org.springframework.security.web.SecurityFilterChain;
 public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf().disable()
-                .authorizeHttpRequests()
-                .requestMatchers("/api/user/**")
-                .hasAnyRole("ADMIN", "USER")
-                .requestMatchers("/api/auth/**").permitAll();
+        http.csrf().disable();
+//                .authorizeHttpRequests()
+//                .antMatchers("/api/user**")
+//                .hasAnyRole("ADMIN", "USER")
+//                .antMatchers("/api/auth**")
+//                .permitAll();
         return http.build();
     }
 
@@ -29,6 +30,8 @@ public class WebSecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) {
         return authenticationConfiguration.getAuthenticationManager();
     }
+
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {

@@ -24,9 +24,10 @@ public class CustomUserDetailsManagerConfig implements UserDetailsService {
 
     private UserDetails createUserDetails(UserLoginDto userLoginDto) {
         return User.builder()
-                .username(userLoginDto.getLogin())
-                .password(userLoginDto.getPassword())
+                .username(userLoginDto.login())
+                .password(userLoginDto.password())
                 .roles(UserRoles.ADMIN.name(), UserRoles.USER.name())
                 .build();
     }
+
 }

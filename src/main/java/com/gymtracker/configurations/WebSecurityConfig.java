@@ -1,5 +1,6 @@
 package com.gymtracker.configurations;
 
+import com.gymtracker.auth.handlers.CustomLogoutSuccessHandler;
 import lombok.SneakyThrows;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,12 +17,20 @@ import org.springframework.security.web.SecurityFilterChain;
 public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf().disable();
-//                .authorizeHttpRequests()
-//                .antMatchers("/api/user**")
-//                .hasAnyRole("ADMIN", "USER")
-//                .antMatchers("/api/auth**")
-//                .permitAll();
+        http.csrf().disable()
+                .authorizeHttpRequests()
+                .antMatchers("/api/user**")
+                .hasAnyRole("ADMIN", "USER")
+                .antMatchers("/api/auth**")
+                .permitAll()
+                .and()
+                .logout()
+                .logoutUrl("/api/auth/logout")
+                .invalidateHttpSession(true)
+                .clearAuthentication(true)
+                .deleteCookies("JSESSIONID")
+                .logoutSuccessHandler(new CustomLogoutSuccessHandler())
+                .permitAll();
         return http.build();
     }
 
@@ -30,7 +39,6 @@ public class WebSecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) {
         return authenticationConfiguration.getAuthenticationManager();
     }
-
 
 
     @Bean

@@ -1,5 +1,7 @@
 package com.gymtracker.user;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gymtracker.gym_diary.GymDiary;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -42,10 +44,12 @@ public class User {
     private UserRoles userRole;
 
     @CreatedDate
+    @JsonFormat(pattern = "yyyy-MM-dd")
     @Column
     private LocalDateTime creationDate;
 
-    @OneToMany
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private List<GymDiary> gymDiaries;
 
 }

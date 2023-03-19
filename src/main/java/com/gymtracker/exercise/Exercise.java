@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @NoArgsConstructor
@@ -23,13 +24,12 @@ public class Exercise {
     private Long id;
 
     @Column(name = "description")
-    @NotEmpty(message = "exercise.description.notNull")
+    @NotEmpty(message = "exercise.description.notEmpty")
     private String description;
 
     @Enumerated(EnumType.STRING)
-    @NotEmpty(message = "exercise.muscleGroup.notNull")
+    @NotNull(message = "exercise.muscleGroup.notNull")
     @Column(name = "muscle_group")
-
     private MuscleGroup muscleGroup;
     @OneToMany(mappedBy = "exercise")
     @JsonIgnore

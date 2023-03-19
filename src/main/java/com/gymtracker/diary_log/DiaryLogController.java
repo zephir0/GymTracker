@@ -23,9 +23,22 @@ public class DiaryLogController {
         return new ResponseEntity<>("Diary log has been created successfully", HttpStatus.CREATED);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<String> editDiaryLog(@PathVariable Long id,
+                                               @RequestBody DiaryLogDto diaryLogDto) {
+        diaryLogService.editDiaryLog(id, diaryLogDto);
+        return new ResponseEntity<>("Diary log id: " + id + " has been changed", HttpStatus.OK);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<List<DiaryLog>> getGymDiaryLogsForGymDiary(@PathVariable Long id) {
         return new ResponseEntity<>(diaryLogService.getGymDiaryLogsForGymDiary(id), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteDiaryLogById(@PathVariable Long id) {
+        diaryLogService.deleteDiaryLog(id);
+        return new ResponseEntity<>("Diary log id: " + id + " has been deleted", HttpStatus.OK);
     }
 
 }

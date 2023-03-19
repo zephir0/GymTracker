@@ -26,6 +26,18 @@ public class GymDiaryService {
         gymDiaryRepository.save(gymDiary);
     }
 
+    public void editDiary(Long id,
+                            GymDiaryDto gymDiaryDto) {
+        gymDiaryRepository.findById(id).ifPresentOrElse(gymDiary -> {
+            if (isDiaryOwnerOrAdmin(gymDiary, userService.getLoggedUser())) {
+                gymDiary.setTrainingName(gymDiaryDto.trainingName());
+                gymDiaryRepository.save(gymDiary);
+            } else throw new UnauthorizedDiaryAccessException("You are not a gym diary creator or admin.");
+        }, () -> {
+            throw new GymDiaryNotFoundException("Gym diary doesn't exist in database");
+        });
+    }
+
     public void deleteDiary(Long id) {
         gymDiaryRepository.findById(id).ifPresentOrElse(gymDiary -> {
             if (isDiaryOwnerOrAdmin(gymDiary, userService.getLoggedUser())) {
@@ -38,11 +50,10 @@ public class GymDiaryService {
 
     public GymDiary findById(Long id) {
         return gymDiaryRepository.findById(id)
-                .filter(gymDiary -> isDiaryOwnerOrAdmin(gymDiary, userService.getLoggedUser()))
-                .orElseThrow(() -> new UnauthorizedDiaryAccessException("You are not a diary creator or admin"));
+                .orElseThrow(() -> new GymDiaryNotFoundException("Gym diary was not found."));
     }
 
-    // CHYBA ZMIENIC TA METODE, BY PODAWALO SIE W NIEJ USERA I DOPIERO WTEDY SPRAWDZALO, ZAMIAST PODAWAC DZIENNIK I NA ZASADZIE DZIENNIKA.
+
     public boolean isDiaryOwnerOrAdmin(GymDiary gymDiary,
                                        User user) {
         return (user.getUserRole().equals(UserRoles.ADMIN) || gymDiary.getUser().equals(user));

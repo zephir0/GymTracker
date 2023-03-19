@@ -28,9 +28,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidationException(ConstraintViolationException ex) {
-        List<String> collect = ex.getConstraintViolations()
-                .stream()
-                .map(violation -> messageSource.getMessage(violation.getMessage(), null, Locale.getDefault())).toList();
+        List<String> collect = ex.getConstraintViolations().stream().map(violation -> messageSource.getMessage(violation.getMessage(), null, Locale.getDefault())).toList();
         return new ErrorResponse(HttpStatus.CONFLICT, collect);
     }
 
@@ -39,5 +37,4 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleValidationException() {
         return new ResponseEntity<>("Invalid login or password", HttpStatus.UNAUTHORIZED);
     }
-
 }

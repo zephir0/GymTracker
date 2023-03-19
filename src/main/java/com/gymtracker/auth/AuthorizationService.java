@@ -1,18 +1,17 @@
 package com.gymtracker.auth;
 
 import com.gymtracker.auth.exception.UserAlreadyExistException;
+import com.gymtracker.auth.token.JwtTokenProvider;
 import com.gymtracker.user.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
-
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
 
 @RequiredArgsConstructor
 @Service
@@ -21,6 +20,7 @@ public class AuthorizationService {
     private final AuthenticationManager authenticationManager;
     private final UserRegisterMapper userRegisterMapper;
     private final UserRepository userRepository;
+    private final JwtTokenProvider jwtTokenProvider;
 
     public void register(UserRegisterDto userRegisterDto) {
         if (userRepository.existsByLogin(userRegisterDto.login())) {
@@ -30,15 +30,11 @@ public class AuthorizationService {
         userRepository.save(user);
     }
 
-    public void login(UserLoginDto userLoginDto) {
+    public ResponseEntity<String> login(UserLoginDto userLoginDto) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userLoginDto.login(), userLoginDto.password()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
+        String generatedToken = jwtTokenProvider.generateToken(authentication);
+        return new ResponseEntity<>(generatedToken, HttpStatus.OK);
     }
-
-//    public void logout(HttpServletRequest httpRequest) {
-//        SecurityContextHolder.getContext().setAuthentication(null);
-//        httpRequest.getSession().invalidate();
-//    }
-
 
 }

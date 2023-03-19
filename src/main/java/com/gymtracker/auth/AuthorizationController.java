@@ -20,8 +20,7 @@ public class AuthorizationController {
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody @Valid UserLoginDto userLoginDto) {
-        authorizationService.login(userLoginDto);
-        return new ResponseEntity<>("User signed successfully.", HttpStatus.OK);
+        return authorizationService.login(userLoginDto);
     }
 
     @PostMapping("/register")

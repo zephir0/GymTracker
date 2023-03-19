@@ -1,3 +1,8 @@
+app:
+  jwt:
+    secret: secretKey
+    expiration-in-ms: 36000000
+
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/gym_tracker
@@ -12,6 +17,7 @@ spring:
           region:
             factory_class: org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory
         show_sql: true
+
 server:
   error:
     include-stacktrace: never

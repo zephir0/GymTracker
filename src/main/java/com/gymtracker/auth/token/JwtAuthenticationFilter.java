@@ -1,13 +1,12 @@
 package com.gymtracker.auth.token;
 
-import com.gymtracker.configurations.CustomUserDetailsManagerConfig;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.SignatureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
@@ -19,14 +18,11 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
-    private final CustomUserDetailsManagerConfig userDetailsManagerConfig;
     private final JwtTokenProvider tokenProvider;
 
     public JwtAuthenticationFilter(AuthenticationManager authenticationManager,
-                                   CustomUserDetailsManagerConfig userDetailsManagerConfig,
                                    JwtTokenProvider jwtTokenProvider) {
         super(authenticationManager);
-        this.userDetailsManagerConfig = userDetailsManagerConfig;
         this.tokenProvider = jwtTokenProvider;
     }
 
@@ -44,15 +40,10 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
 
         try {
             String token = extractTokenFromHeader(header);
-            String userLoginFromJwtToken = tokenProvider.getUserLoginFromJwtToken(token);
-            UserDetails userDetails = userDetailsManagerConfig.loadUserByUsername(userLoginFromJwtToken);
+            Authentication authentication = tokenProvider.getAuthentication(token);
+            authenticateUser(request, (UsernamePasswordAuthenticationToken) authentication);
+            chain.doFilter(request, response);
 
-            if (tokenProvider.validateToken(token, userDetails)) {
-                authenticateUser(request, userDetails);
-                chain.doFilter(request, response);
-            } else {
-                chain.doFilter(request, response);
-            }
         } catch (SignatureException ex) {
             sendErrorResponse(response, HttpStatus.UNAUTHORIZED.value(), "Token is invalid");
         } catch (ExpiredJwtException ex) {
@@ -65,10 +56,9 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
     }
 
     private void authenticateUser(HttpServletRequest request,
-                                  UserDetails userDetails) {
-        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-        usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-        SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                                  UsernamePasswordAuthenticationToken authenticationToken) {
+        authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
     }
 
     private void sendErrorResponse(HttpServletResponse response,
@@ -84,6 +74,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
             printWriter.flush();
         }
     }
+
 
 }
 

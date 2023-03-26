@@ -1,11 +1,15 @@
 package com.gymtracker.auth.token;
 
+import com.gymtracker.configurations.CustomUserDetailsManagerConfig;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.server.ServerHttpRequest;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -13,8 +17,11 @@ import org.springframework.stereotype.Component;
 import java.util.Date;
 
 @Component
+@RequiredArgsConstructor
 public class JwtTokenProvider {
     private static final Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class);
+    private final CustomUserDetailsManagerConfig userDetailsManagerConfig;
+
     @Value("${app.jwt.secret}")
     private String jwtSecret;
     @Value("${app.jwt.expiration-in-ms}")
@@ -29,9 +36,26 @@ public class JwtTokenProvider {
         return Jwts.builder().setSubject(userPrincipal.getUsername()).setIssuedAt(dateNow).setExpiration(expiryDate).signWith(SignatureAlgorithm.HS512, jwtSecret).compact();
     }
 
-    public boolean validateToken(String token,
-                                 UserDetails userDetails) {
+    public String resolveTokenFromHttpRequest(ServerHttpRequest request) {
+        String bearerToken = request.getHeaders().getFirst("Authorization");
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        } else return null;
+    }
+
+    public Authentication getAuthentication(String token) {
+        if (token != null && validateToken(token)) {
+            logger.info("jwt during token verification: {}", jwtSecret);
+
+            String userLoginFromJwtToken = getUserLoginFromJwtToken(token);
+            UserDetails userDetails = userDetailsManagerConfig.loadUserByUsername(userLoginFromJwtToken);
+            return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        } else return null;
+    }
+
+    public boolean validateToken(String token) {
         String userLoginFromJwtToken = getUserLoginFromJwtToken(token);
+        UserDetails userDetails = userDetailsManagerConfig.loadUserByUsername(userLoginFromJwtToken);
         return (userLoginFromJwtToken.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
@@ -52,10 +76,10 @@ public class JwtTokenProvider {
     }
 
     private Claims getClaimsFromToken(String token) {
-        logger.info("jwtSecret during token verification: {}", jwtSecret);
-
         return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
     }
+
+
 }
 
 

@@ -40,7 +40,7 @@ public class WebSecurityConfig {
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .addFilter(new JwtAuthenticationFilter(authenticationManager(authenticationConfiguration()), userDetailsManagerConfig, jwtTokenProvider));
+                .addFilter(new JwtAuthenticationFilter(authenticationManager(authenticationConfiguration()), jwtTokenProvider));
 
 
         http.logout()

@@ -2,9 +2,11 @@ package com.gymtracker.exercise;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gymtracker.diary_log.DiaryLog;
+import com.gymtracker.user.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.cache.annotation.Cacheable;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -16,6 +18,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "exercise")
+@Cacheable(cacheNames = "exercises")
 public class Exercise {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,7 +34,16 @@ public class Exercise {
     @NotNull(message = "exercise.muscleGroup.notNull")
     @Column(name = "muscle_group")
     private MuscleGroup muscleGroup;
+
     @OneToMany(mappedBy = "exercise")
     @JsonIgnore
     private List<DiaryLog> diaryLogList;
+
+    @Column(name = "admin_created")
+    private boolean adminCreated;
+
+    @ManyToOne
+    @JsonIgnore
+    @JoinColumn(name = "user_id")
+    private User user;
 }

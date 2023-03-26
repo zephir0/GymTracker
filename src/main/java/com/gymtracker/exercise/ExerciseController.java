@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -26,6 +27,12 @@ public class ExerciseController {
                                                @RequestBody ExerciseDto exerciseDto) {
         exerciseService.editExercise(id, exerciseDto);
         return new ResponseEntity<>("Exercise deleted successfully", HttpStatus.OK);
+    }
+
+    @GetMapping()
+    public ResponseEntity<List<Exercise>> getExercises() {
+        List<Exercise> allExercises = exerciseService.getAllExercises();
+        return new ResponseEntity<>(allExercises, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

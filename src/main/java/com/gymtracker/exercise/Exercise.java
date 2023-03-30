@@ -2,7 +2,7 @@ package com.gymtracker.exercise;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gymtracker.diary_log.DiaryLog;
-import com.gymtracker.user.User;
+import com.gymtracker.user.entity.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

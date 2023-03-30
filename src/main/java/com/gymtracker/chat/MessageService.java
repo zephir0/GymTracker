@@ -1,14 +1,16 @@
 package com.gymtracker.chat;
 
-import com.gymtracker.chat.exception.NotAuthorizedToSendMessageInChannelException;
+import com.gymtracker.chat.exception.NotAuthorizedToGetMessagesException;
 import com.gymtracker.ticket.Ticket;
 import com.gymtracker.ticket.TicketService;
-import com.gymtracker.user.User;
-import com.gymtracker.user.UserRoles;
+import com.gymtracker.ticket.exception.TicketNotFoundException;
 import com.gymtracker.user.UserService;
+import com.gymtracker.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -16,28 +18,37 @@ public class MessageService {
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final UserService userService;
     private final MessageRepository messageRepository;
-    private final TicketService ticketService;
     private final MessageMapper messageMapper;
+    private final TicketService ticketService;
+
 
     public void send(Long ticketId,
                      MessageDto messageDto) {
-        User sender = userService.findById(messageDto.senderId());
-        Ticket ticket = ticketService.findById(ticketId);
-
-        validateSenderAuthorization(ticket, sender, messageDto.senderId());
-
         broadcastMessage(ticketId, messageDto);
-        saveMessageInDatabase(ticket, sender, messageDto);
+        saveToDatabase(ticketId, messageDto);
     }
 
 
-    private void validateSenderAuthorization(Ticket ticket,
-                                             User sender,
-                                             Long senderId) {
-        if (!senderId.equals(ticket.getAuthor().getId()) && !sender.getUserRole().equals(UserRoles.ADMIN)) {
-            throw new NotAuthorizedToSendMessageInChannelException("You are not authorized to send message in channel id: " + ticket.getId());
-        }
+    public void saveToDatabase(Long ticketId,
+                               MessageDto messageDto) {
+        User sender = userService.getReference(messageDto.senderId());
+        Ticket ticket = ticketService.getReference(ticketId);
+        Message message = messageMapper.toEntity(sender, messageDto, ticket);
+        messageRepository.save(message);
     }
+
+
+    public List<Message> getMessageList(Long ticketId) {
+        User loggedUser = userService.getLoggedUser();
+
+        return ticketService.findById(ticketId).map(ticket -> {
+            if (ticket.getAuthor().getId().equals(loggedUser.getId())) {
+                return ticket.getMessageList();
+            } else
+                throw new NotAuthorizedToGetMessagesException("You are not authorized to get messages in that ticket channel");
+        }).orElseThrow(() -> new TicketNotFoundException("Ticket doesn't exist"));
+    }
+
 
     private void broadcastMessage(Long ticketId,
                                   MessageDto messageDto) {
@@ -45,11 +56,5 @@ public class MessageService {
         simpMessagingTemplate.convertAndSend("/topic/messages/admin/" + ticketId, messageDto);
     }
 
-    private void saveMessageInDatabase(Ticket ticket,
-                                       User sender,
-                                       MessageDto messageDto) {
-        Message message = messageMapper.toEntity(sender, messageDto);
-        message.setTicket(ticket);
-        messageRepository.save(message);
-    }
+
 }

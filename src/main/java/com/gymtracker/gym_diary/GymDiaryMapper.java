@@ -1,6 +1,6 @@
 package com.gymtracker.gym_diary;
 
-import com.gymtracker.user.User;
+import com.gymtracker.user.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.stereotype.Component;

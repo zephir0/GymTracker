@@ -23,6 +23,7 @@ public class DiaryLogController {
         return new ResponseEntity<>("Diary log has been created successfully", HttpStatus.CREATED);
     }
 
+
     @PutMapping("/{id}")
     public ResponseEntity<String> editDiaryLog(@PathVariable Long id,
                                                @RequestBody DiaryLogDto diaryLogDto) {

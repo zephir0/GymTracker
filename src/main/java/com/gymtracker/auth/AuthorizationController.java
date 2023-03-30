@@ -1,7 +1,7 @@
 package com.gymtracker.auth;
 
-import com.gymtracker.user.UserLoginDto;
-import com.gymtracker.user.UserRegisterDto;
+import com.gymtracker.user.dto.UserLoginDto;
+import com.gymtracker.user.dto.UserRegisterDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

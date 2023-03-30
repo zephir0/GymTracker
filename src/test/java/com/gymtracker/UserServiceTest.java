@@ -1,7 +1,7 @@
 package com.gymtracker;
 
-import com.gymtracker.user.User;
-import com.gymtracker.user.UserLoginDto;
+import com.gymtracker.user.entity.User;
+import com.gymtracker.user.dto.UserLoginDto;
 import com.gymtracker.user.UserRepository;
 import com.gymtracker.user.UserService;
 import com.gymtracker.user.exception.UserNotLoggedInException;

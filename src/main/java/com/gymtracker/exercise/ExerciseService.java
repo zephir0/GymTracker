@@ -2,13 +2,14 @@ package com.gymtracker.exercise;
 
 import com.gymtracker.exercise.exception.ExerciseNotFoundException;
 import com.gymtracker.exercise.exception.NotAuthorizedToAccessExerciseException;
-import com.gymtracker.user.User;
-import com.gymtracker.user.UserRoles;
 import com.gymtracker.user.UserService;
+import com.gymtracker.user.entity.User;
+import com.gymtracker.user.entity.UserRoles;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -58,5 +59,10 @@ public class ExerciseService {
 
     private boolean isAuthorized(Exercise exercise) {
         return exercise.getUser().equals(userService.getLoggedUser()) || exercise.getUser().getUserRole().equals(UserRoles.ADMIN);
+    }
+
+
+    public Optional<Exercise> getReferenceByDescription(String description) {
+        return exerciseRepository.getReferenceByDescription(description);
     }
 }

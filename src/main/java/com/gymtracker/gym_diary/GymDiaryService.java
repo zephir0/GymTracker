@@ -2,9 +2,9 @@ package com.gymtracker.gym_diary;
 
 import com.gymtracker.gym_diary.exception.GymDiaryNotFoundException;
 import com.gymtracker.gym_diary.exception.UnauthorizedDiaryAccessException;
-import com.gymtracker.user.User;
-import com.gymtracker.user.UserRoles;
 import com.gymtracker.user.UserService;
+import com.gymtracker.user.entity.User;
+import com.gymtracker.user.entity.UserRoles;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +27,7 @@ public class GymDiaryService {
     }
 
     public void editDiary(Long id,
-                            GymDiaryDto gymDiaryDto) {
+                          GymDiaryDto gymDiaryDto) {
         gymDiaryRepository.findById(id).ifPresentOrElse(gymDiary -> {
             if (isDiaryOwnerOrAdmin(gymDiary, userService.getLoggedUser())) {
                 gymDiary.setTrainingName(gymDiaryDto.trainingName());
@@ -56,7 +56,7 @@ public class GymDiaryService {
 
     public boolean isDiaryOwnerOrAdmin(GymDiary gymDiary,
                                        User user) {
-        return (user.getUserRole().equals(UserRoles.ADMIN) || gymDiary.getUser().equals(user));
+        return (user.getUserRole().equals(UserRoles.ADMIN) || gymDiary.getUser().getId().equals(user.getId()));
     }
 
 

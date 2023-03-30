@@ -1,4 +1,4 @@
-package com.gymtracker.user;
+package com.gymtracker.user.entity;
 
 public enum UserRoles {
     ADMIN, USER

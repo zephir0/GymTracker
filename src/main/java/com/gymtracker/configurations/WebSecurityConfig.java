@@ -1,7 +1,7 @@
 package com.gymtracker.configurations;
 
 import com.gymtracker.auth.handlers.CustomLogoutSuccessHandler;
-import com.gymtracker.auth.token.JwtAuthenticationFilter;
+import com.gymtracker.configurations.filter.JwtAuthenticationFilter;
 import com.gymtracker.auth.token.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -23,10 +23,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableGlobalMethodSecurity(
         prePostEnabled = true)
 public class WebSecurityConfig {
-
-    private final CustomUserDetailsManagerConfig userDetailsManagerConfig;
     private final JwtTokenProvider jwtTokenProvider;
-
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {

@@ -1,7 +1,7 @@
 package com.gymtracker.exercise;
 
-import com.gymtracker.user.User;
-import com.gymtracker.user.UserRoles;
+import com.gymtracker.user.entity.User;
+import com.gymtracker.user.entity.UserRoles;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

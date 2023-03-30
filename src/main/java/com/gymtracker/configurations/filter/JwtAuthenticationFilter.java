@@ -1,5 +1,6 @@
-package com.gymtracker.auth.token;
+package com.gymtracker.configurations.filter;
 
+import com.gymtracker.auth.token.JwtTokenProvider;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.SignatureException;
 import org.springframework.http.HttpStatus;
@@ -17,15 +18,16 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+
 public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
+
     private final JwtTokenProvider tokenProvider;
 
     public JwtAuthenticationFilter(AuthenticationManager authenticationManager,
-                                   JwtTokenProvider jwtTokenProvider) {
+                                   JwtTokenProvider tokenProvider) {
         super(authenticationManager);
-        this.tokenProvider = jwtTokenProvider;
+        this.tokenProvider = tokenProvider;
     }
-
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -43,12 +45,23 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
             Authentication authentication = tokenProvider.getAuthentication(token);
             authenticateUser(request, (UsernamePasswordAuthenticationToken) authentication);
             chain.doFilter(request, response);
-
-        } catch (SignatureException ex) {
-            sendErrorResponse(response, HttpStatus.UNAUTHORIZED.value(), "Token is invalid");
-        } catch (ExpiredJwtException ex) {
-            sendErrorResponse(response, HttpStatus.UNAUTHORIZED.value(), "Token is expired");
+        } catch (SignatureException | ExpiredJwtException ex) {
+            handleException(response, ex);
         }
+    }
+
+    private void handleException(HttpServletResponse response,
+                                 Exception ex) throws IOException {
+        int statusCode = HttpStatus.UNAUTHORIZED.value();
+        String errorMessage;
+
+        if (ex instanceof SignatureException) {
+            errorMessage = "Token is invalid";
+        } else {
+            errorMessage = "Token is expired";
+        }
+
+        sendErrorResponse(response, statusCode, errorMessage);
     }
 
     private String extractTokenFromHeader(String header) {
@@ -74,7 +87,4 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
             printWriter.flush();
         }
     }
-
-
 }
-

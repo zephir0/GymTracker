@@ -1,5 +1,6 @@
 package com.gymtracker.diary_log;
 
+import com.gymtracker.diary_log.exception.GymDiaryLogsNotFoundException;
 import com.gymtracker.exercise.ExerciseService;
 import com.gymtracker.exercise.exception.ExerciseNotFoundException;
 import com.gymtracker.gym_diary.GymDiary;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -72,9 +74,33 @@ public class DiaryLogService {
 
     }
 
+    public List<DiaryLog> findAllByExerciseId(Long exerciseId) {
+        return filterAuthorizedDiaryLogs(diaryLogRepository.findAllByExerciseId(exerciseId));
+    }
+
+    public List<DiaryLog> findAllByGymDiaryId(Long gymDiaryId) {
+        return filterAuthorizedDiaryLogs(diaryLogRepository.findAllByGymDiaryId(gymDiaryId));
+    }
+
+    public List<DiaryLog> findAllByExerciseIdAndGymDiaryId(Long exerciseId,
+                                                           Long gymDiaryId) {
+        return filterAuthorizedDiaryLogs(diaryLogRepository.findAllByExerciseIdAndGymDiaryId(exerciseId, gymDiaryId));
+    }
+
     private void checkAuthorization(GymDiary gymDiary) {
         if (!gymDiaryService.isDiaryOwnerOrAdmin(gymDiary, userService.getLoggedUser())) {
             throw new UnauthorizedDiaryAccessException("You are not a diary creator or admin");
         }
+    }
+
+    private List<DiaryLog> filterAuthorizedDiaryLogs(List<DiaryLog> diaryLogs) {
+        return diaryLogs.stream().filter(diaryLog -> {
+            try {
+                checkAuthorization(diaryLog.getGymDiary());
+                return true;
+            } catch (UnauthorizedDiaryAccessException e) {
+                return false;
+            }
+        }).collect(Collectors.toList());
     }
 }

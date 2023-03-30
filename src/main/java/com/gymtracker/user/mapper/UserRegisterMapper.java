@@ -1,5 +1,7 @@
-package com.gymtracker.user;
+package com.gymtracker.user.mapper;
 
+import com.gymtracker.user.dto.UserRegisterDto;
+import com.gymtracker.user.entity.User;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

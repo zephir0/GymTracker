@@ -1,4 +1,6 @@
-package com.gymtracker.user;
+package com.gymtracker.user.dto;
+
+import com.gymtracker.user.entity.UserRoles;
 
 import java.time.LocalDateTime;
 

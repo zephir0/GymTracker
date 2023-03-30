@@ -2,7 +2,7 @@ package com.gymtracker.ticket;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gymtracker.chat.Message;
-import com.gymtracker.user.User;
+import com.gymtracker.user.entity.User;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -16,6 +16,7 @@ import java.util.List;
 @Getter
 @Setter
 @RequiredArgsConstructor
+@Cacheable(cacheNames = "tickets")
 @Table(name = "ticket")
 public class Ticket {
 

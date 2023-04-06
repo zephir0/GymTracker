@@ -1,4 +1,14 @@
+app:
+  jwt:
+    secret: secretKey
+    expiration-in-ms: 36000000
+
+
+
 spring:
+  cache:
+    type: simple
+    cache-names: users, exercises, tickets, messages, diaryLogs
   datasource:
     url: jdbc:mysql://localhost:3306/gym_tracker
     username: root
@@ -12,6 +22,7 @@ spring:
           region:
             factory_class: org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory
         show_sql: true
+
 server:
   error:
     include-stacktrace: never

@@ -1,9 +1,14 @@
-package com.gymtracker.user;
+package com.gymtracker.user.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.gymtracker.exercise.Exercise;
 import com.gymtracker.gym_diary.GymDiary;
+import com.gymtracker.ticket.Ticket;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
@@ -17,6 +22,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
+@Cacheable(cacheNames = "users")
 @Table(name = "user")
 public class User {
     @Id
@@ -42,10 +48,19 @@ public class User {
     private UserRoles userRole;
 
     @CreatedDate
+    @JsonFormat(pattern = "yyyy-MM-dd")
     @Column
     private LocalDateTime creationDate;
 
-    @OneToMany
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private List<GymDiary> gymDiaries;
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private List<Exercise> exerciseList;
+
+    @OneToMany(mappedBy = "author")
+    @JsonIgnore
+    private List<Ticket> ticketList;
 
 }

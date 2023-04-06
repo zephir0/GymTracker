@@ -7,6 +7,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,10 +22,23 @@ public class GymDiaryController {
         return new ResponseEntity<>("Gym diary has been created", HttpStatus.CREATED);
     }
 
+    @PutMapping("/{id}")
+    ResponseEntity<String> editDiary(@PathVariable Long id,
+                                     @Valid @RequestBody GymDiaryDto gymDiaryDto) {
+        gymDiaryService.editDiary(id, gymDiaryDto);
+        return new ResponseEntity<>("Gym diare has been deleted", HttpStatus.OK);
+    }
+
     @DeleteMapping("/{id}")
     ResponseEntity<String> deleteDiary(@PathVariable Long id) {
         gymDiaryService.deleteDiary(id);
         return new ResponseEntity<>("Gym diare has been deleted", HttpStatus.OK);
+    }
+
+    @GetMapping()
+    ResponseEntity<List<GymDiary>> getAllGymDiariesForLoggedUser() {
+        List<GymDiary> gymDiaries = gymDiaryService.getAllGymDiariesForLoggedUser();
+        return new ResponseEntity<>(gymDiaries, HttpStatus.OK);
     }
 
 }

@@ -1,23 +1,68 @@
 package com.gymtracker.exercise;
 
-import com.gymtracker.exercise.exception.EmptyExerciseDescriptionException;
-import com.gymtracker.exercise.exception.EmptyExerciseMuscleGroupException;
+import com.gymtracker.exercise.exception.ExerciseNotFoundException;
+import com.gymtracker.exercise.exception.NotAuthorizedToAccessExerciseException;
+import com.gymtracker.user.UserService;
+import com.gymtracker.user.entity.User;
+import com.gymtracker.user.entity.UserRoles;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class ExerciseService {
     private final ExerciseRepository exerciseRepository;
     private final ExerciseMapper exerciseMapper;
+    private final UserService userService;
 
     public void createExercise(ExerciseDto exerciseDto) {
-        if (exerciseDto.description().isEmpty())
-            throw new EmptyExerciseDescriptionException("You need to insert an exercise description");
+        User loggedUser = userService.getLoggedUser();
+        Exercise exercise = exerciseMapper.toEntity(exerciseDto, loggedUser);
+        exerciseRepository.save(exercise);
+    }
 
-        if (exerciseDto.muscleGroup() == null)
-            throw new EmptyExerciseMuscleGroupException("You need to insert an exercise muscle group");
+    public void editExercise(Long id,
+                             ExerciseDto exerciseDto) {
+        exerciseRepository.findById(id).map(exercise -> {
+            if (isAuthorized(exercise)) {
+                exercise.setDescription(exerciseDto.description());
+                exercise.setMuscleGroup(exerciseDto.muscleGroup());
+                exerciseRepository.save(exercise);
+                return exercise;
+            } else throw new NotAuthorizedToAccessExerciseException("You not admin or creator of that exercise");
+        }).orElseThrow(() -> new ExerciseNotFoundException("Exercise not found"));
+    }
 
-        exerciseRepository.save(exerciseMapper.toEntity(exerciseDto));
+    public void deleteExercise(Long id) {
+        exerciseRepository.findById(id).map(exercise -> {
+            if (isAuthorized(exercise)) {
+                exerciseRepository.delete(exercise);
+                return exercise;
+            } else throw new NotAuthorizedToAccessExerciseException("You not admin or creator of that exercise");
+        }).orElseThrow(() -> new ExerciseNotFoundException("Exercise not found"));
+    }
+
+
+    public List<Exercise> getAllExercises() {
+        Long id = userService.getLoggedUser().getId();
+        return exerciseRepository.findAllByUserIdOrAdminCreated(id, true);
+    }
+
+
+    public boolean existById(Long id) {
+        return exerciseRepository.existsById(id);
+    }
+
+
+    private boolean isAuthorized(Exercise exercise) {
+        return exercise.getUser().equals(userService.getLoggedUser()) || exercise.getUser().getUserRole().equals(UserRoles.ADMIN);
+    }
+
+
+    public Optional<Exercise> getReferenceByDescription(String description) {
+        return exerciseRepository.getReferenceByDescription(description);
     }
 }

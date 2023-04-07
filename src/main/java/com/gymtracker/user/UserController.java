@@ -9,12 +9,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
 
-    @GetMapping()
+    @GetMapping("/logged-user")
     ResponseEntity<User> getLoggedUserInfo() {
         User loggedUser = userService.getLoggedUser();
         return new ResponseEntity<>(loggedUser, HttpStatus.OK);

@@ -1,8 +1,8 @@
-package com.gymtracker.gym_diary;
+package com.gymtracker.training_session;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.gymtracker.diary_log.DiaryLog;
+import com.gymtracker.training_log.TrainingLog;
 import com.gymtracker.user.entity.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,8 +17,8 @@ import java.util.List;
 @Setter
 @Getter
 @NoArgsConstructor
-@Table(name = "gym_diary")
-public class GymDiary {
+@Table(name = "training_session")
+public class TrainingSession {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -29,7 +29,7 @@ public class GymDiary {
     private LocalDateTime trainingDate;
 
     @Column(name = "training_name")
-    @NotEmpty(message = "gymDiary.trainingName.notNull")
+    @NotEmpty(message = "trainingSession.trainingName.notNull")
     private String trainingName;
 
     @ManyToOne
@@ -39,5 +39,5 @@ public class GymDiary {
 
     @OneToMany(mappedBy = "gymDiary")
     @JsonIgnore
-    private List<DiaryLog> diaryLogs;
+    private List<TrainingLog> trainingLogs;
 }

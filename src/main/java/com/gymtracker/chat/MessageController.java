@@ -6,12 +6,14 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api/tickets/{ticketId}/messages")
 public class MessageController {
     private final MessageService messageService;
 
@@ -21,7 +23,7 @@ public class MessageController {
         messageService.send(ticketId, messageDto);
     }
 
-    @GetMapping("/api/messages/{ticketId}")
+    @GetMapping()
     public List<Message> messageList(@PathVariable Long ticketId) {
         return messageService.getMessageList(ticketId);
     }

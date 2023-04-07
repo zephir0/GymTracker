@@ -11,7 +11,7 @@ import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/api/exercise")
+@RequestMapping("/api/exercises")
 public class ExerciseController {
     private final ExerciseService exerciseService;
 
@@ -26,7 +26,7 @@ public class ExerciseController {
     public ResponseEntity<String> editExercise(@PathVariable Long id,
                                                @RequestBody ExerciseDto exerciseDto) {
         exerciseService.editExercise(id, exerciseDto);
-        return new ResponseEntity<>("Exercise deleted successfully", HttpStatus.OK);
+        return new ResponseEntity<>("Exercise updated successfully", HttpStatus.OK);
     }
 
     @GetMapping()

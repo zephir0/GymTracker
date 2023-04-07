@@ -1,8 +1,8 @@
-package com.gymtracker.diary_log;
+package com.gymtracker.training_log;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gymtracker.exercise.Exercise;
-import com.gymtracker.gym_diary.GymDiary;
+import com.gymtracker.training_session.TrainingSession;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,19 +16,19 @@ import javax.validation.constraints.PositiveOrZero;
 @Setter
 @Getter
 @Table(name = "diary_logs")
-public class DiaryLog {
+public class TrainingLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
     @Column(name = "reps")
-    @NotNull(message = "diaryLog.reps.notNull")
+    @NotNull(message = "trainingLog.reps.notNull")
     @PositiveOrZero
     private Integer reps;
 
     @Column(name = "weight")
-    @NotNull(message = "diaryLog.weight.notNull")
+    @NotNull(message = "trainingLog.weight.notNull")
     @PositiveOrZero
     private Integer weight;
 
@@ -37,13 +37,13 @@ public class DiaryLog {
 
     @ManyToOne
     @JoinColumn(name = "exercise_id")
-    @NotNull(message = "diaryLog.exerciseId.notNull")
+    @NotNull(message = "trainingLog.exerciseId.notNull")
     private Exercise exercise;
 
     @ManyToOne
-    @NotNull(message = "diaryLog.gymDiaryId.notNull")
-    @JoinColumn(name = "gym_diary_id")
+    @NotNull(message = "trainingLog.trainingSessionId.notNull")
+    @JoinColumn(name = "training_session_id")
     @JsonIgnore
-    private GymDiary gymDiary;
+    private TrainingSession trainingSession;
 
 }

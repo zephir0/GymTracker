@@ -3,7 +3,7 @@ package com.gymtracker.user.entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gymtracker.exercise.Exercise;
-import com.gymtracker.gym_diary.GymDiary;
+import com.gymtracker.training_session.TrainingSession;
 import com.gymtracker.ticket.Ticket;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -54,7 +54,7 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     @JsonIgnore
-    private List<GymDiary> gymDiaries;
+    private List<TrainingSession> trainingSessions;
     @OneToMany(mappedBy = "user")
     @JsonIgnore
     private List<Exercise> exerciseList;

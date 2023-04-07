@@ -1,4 +1,4 @@
-package com.gymtracker.gym_diary;
+package com.gymtracker.training_session;
 
 import com.gymtracker.user.entity.User;
 import org.mapstruct.Mapper;
@@ -7,10 +7,10 @@ import org.springframework.stereotype.Component;
 
 @Mapper(componentModel = "spring")
 @Component
-public interface GymDiaryMapper {
+public interface TrainingSessionMapper {
 
     @Mapping(target = "user", source = "user")
-    GymDiary toEntity(GymDiaryDto gymDiaryDto,
-                      User user);
+    TrainingSession toEntity(TrainingSessionDto trainingSessionDto,
+                             User user);
 
 }

@@ -25,7 +25,6 @@ public class Ticket {
     @Column(name = "id")
     private Long id;
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name = "user_id")
     private User author;
 
@@ -36,6 +35,5 @@ public class Ticket {
     private LocalDateTime creationDate;
 
     @OneToMany(mappedBy = "ticket")
-    @JsonIgnore
     private List<Message> messageList;
 }

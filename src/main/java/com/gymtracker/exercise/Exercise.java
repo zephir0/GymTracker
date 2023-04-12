@@ -23,7 +23,6 @@ public class Exercise {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    @JsonIgnore
     private Long id;
 
     @Column(name = "description")
@@ -36,14 +35,12 @@ public class Exercise {
     private MuscleGroup muscleGroup;
 
     @OneToMany(mappedBy = "exercise")
-    @JsonIgnore
     private List<TrainingLog> trainingLogList;
 
     @Column(name = "admin_created")
     private boolean adminCreated;
 
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name = "user_id")
     private User user;
 }

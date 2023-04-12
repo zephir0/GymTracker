@@ -24,7 +24,7 @@ public class MessageController {
     }
 
     @GetMapping()
-    public List<Message> messageList(@PathVariable Long ticketId) {
+    public List<MessageResponseDto> messageList(@PathVariable Long ticketId) {
         return messageService.getMessageList(ticketId);
     }
 

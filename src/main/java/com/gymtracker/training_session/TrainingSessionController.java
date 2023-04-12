@@ -36,9 +36,15 @@ public class TrainingSessionController {
     }
 
     @GetMapping("/user")
-    ResponseEntity<List<TrainingSession>> getAllGymDiariesForLoggedUser() {
-        List<TrainingSession> gymDiaries = trainingSessionService.getAllTrainingSessionsForLoggedUser();
+    ResponseEntity<List<TrainingSessionResponseDto>> getAllGymDiariesForLoggedUser() {
+        List<TrainingSessionResponseDto> gymDiaries = trainingSessionService.getAllTrainingSessionsForLoggedUser();
         return new ResponseEntity<>(gymDiaries, HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    ResponseEntity<TrainingSessionResponseDto> getTrainingSessionById(@PathVariable Long id) {
+        TrainingSessionResponseDto trainingSessionById = trainingSessionService.getTrainingSessionById(id);
+        return new ResponseEntity<>(trainingSessionById, HttpStatus.OK);
     }
 
 }

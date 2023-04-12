@@ -34,10 +34,8 @@ public class TrainingSession {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @JsonIgnore
     private User user;
 
-    @OneToMany(mappedBy = "gymDiary")
-    @JsonIgnore
+    @OneToMany(mappedBy = "trainingSession")
     private List<TrainingLog> trainingLogs;
 }

@@ -5,7 +5,6 @@ import com.gymtracker.exercise.exception.ExerciseNotFoundException;
 import com.gymtracker.training_log.exception.TrainingLogNotFoundException;
 import com.gymtracker.training_session.TrainingSession;
 import com.gymtracker.training_session.TrainingSessionService;
-import com.gymtracker.training_session.exception.TrainingSessionNotFoundException;
 import com.gymtracker.training_session.exception.UnauthorizedTrainingSessionAccessException;
 import com.gymtracker.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -61,16 +60,19 @@ public class TrainingLogService {
     }
 
 
-    public List<TrainingLog> getTrainingLogsForTrainingSession(Long id) {
+    public List<TrainingLogResponseDto> getTrainingLogsForTrainingSession(Long id) {
         TrainingSession trainingSession = trainingSessionService.findById(id);
 
         checkAuthorization(trainingSession);
 
-        List<TrainingLog> trainingLogs = trainingSession.getTrainingLogs();
+        List<TrainingLogResponseDto> trainingLogResponseDtoList = trainingSession.getTrainingLogs()
+                .stream()
+                .map(trainingLogMapper::toDto)
+                .collect(Collectors.toList());
 
-        if (trainingLogs.isEmpty()) {
+        if (trainingLogResponseDtoList.isEmpty()) {
             throw new TrainingLogNotFoundException("There is no logs in that training session");
-        } else return trainingLogs;
+        } else return trainingLogResponseDtoList;
 
     }
 

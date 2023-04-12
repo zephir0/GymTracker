@@ -3,7 +3,6 @@ package com.gymtracker.chat;
 import com.gymtracker.chat.exception.NotAuthorizedToGetMessagesException;
 import com.gymtracker.ticket.Ticket;
 import com.gymtracker.ticket.TicketService;
-import com.gymtracker.ticket.exception.TicketNotFoundException;
 import com.gymtracker.user.UserService;
 import com.gymtracker.user.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +10,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -37,16 +37,23 @@ public class MessageService {
         messageRepository.save(message);
     }
 
-
-    public List<Message> getMessageList(Long ticketId) {
+    public List<MessageResponseDto> getMessageList(Long ticketId) {
         User loggedUser = userService.getLoggedUser();
+        Ticket ticket = getAuthorizedTicket(ticketId, loggedUser);
+        return convertMessagesToDtoList(ticket.getMessageList());
+    }
 
-        return ticketService.findById(ticketId).map(ticket -> {
-            if (ticket.getAuthor().getId().equals(loggedUser.getId())) {
-                return ticket.getMessageList();
-            } else
-                throw new NotAuthorizedToGetMessagesException("You are not authorized to get messages in that ticket channel");
-        }).orElseThrow(() -> new TicketNotFoundException("Ticket doesn't exist"));
+    private Ticket getAuthorizedTicket(Long ticketId,
+                                       User loggedUser) {
+        return ticketService.findById(ticketId)
+                .filter(ticket -> ticket.getAuthor().getId().equals(loggedUser.getId()))
+                .orElseThrow(() -> new NotAuthorizedToGetMessagesException("You are not authorized to get messages in that ticket channel"));
+    }
+
+    private List<MessageResponseDto> convertMessagesToDtoList(List<Message> messages) {
+        return messages.stream()
+                .map(messageMapper::toDto)
+                .collect(Collectors.toList());
     }
 
 

@@ -15,7 +15,7 @@ import javax.validation.constraints.PositiveOrZero;
 @NoArgsConstructor
 @Setter
 @Getter
-@Table(name = "diary_logs")
+@Table(name = "training_log")
 public class TrainingLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,7 +43,6 @@ public class TrainingLog {
     @ManyToOne
     @NotNull(message = "trainingLog.trainingSessionId.notNull")
     @JoinColumn(name = "training_session_id")
-    @JsonIgnore
     private TrainingSession trainingSession;
 
 }

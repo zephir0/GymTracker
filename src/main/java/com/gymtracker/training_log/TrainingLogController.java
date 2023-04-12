@@ -26,14 +26,15 @@ public class TrainingLogController {
 
     @PutMapping("/{id}")
     public ResponseEntity<String> editTrainingLog(@PathVariable Long id,
-                                               @RequestBody TrainingLogDto trainingLogDto) {
+                                                  @RequestBody TrainingLogDto trainingLogDto) {
         trainingLogService.editTrainingLog(id, trainingLogDto);
         return new ResponseEntity<>("Training log id: " + id + " has been changed", HttpStatus.OK);
     }
 
     @GetMapping("/gym-diary/{id}")
-    public ResponseEntity<List<TrainingLog>> getTrainingLogsForTrainingSession(@PathVariable Long id) {
-        return new ResponseEntity<>(trainingLogService.getTrainingLogsForTrainingSession(id), HttpStatus.OK);
+    public ResponseEntity<List<TrainingLogResponseDto>> getTrainingLogsForTrainingSession(@PathVariable Long id) {
+        List<TrainingLogResponseDto> trainingLogsForTrainingSession = trainingLogService.getTrainingLogsForTrainingSession(id);
+        return new ResponseEntity<>(trainingLogsForTrainingSession, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

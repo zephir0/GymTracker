@@ -1,6 +1,6 @@
 package com.gymtracker.user;
 
-import com.gymtracker.user.entity.User;
+import com.gymtracker.user.dto.UserResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,8 +15,8 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/logged-user")
-    ResponseEntity<User> getLoggedUserInfo() {
-        User loggedUser = userService.getLoggedUser();
-        return new ResponseEntity<>(loggedUser, HttpStatus.OK);
+    ResponseEntity<UserResponseDto> getLoggedUserInfo() {
+        UserResponseDto loggedUserInfo = userService.getLoggedUserInfo();
+        return new ResponseEntity<>(loggedUserInfo, HttpStatus.OK);
     }
 }

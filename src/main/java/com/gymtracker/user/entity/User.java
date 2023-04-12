@@ -53,14 +53,11 @@ public class User {
     private LocalDateTime creationDate;
 
     @OneToMany(mappedBy = "user")
-    @JsonIgnore
     private List<TrainingSession> trainingSessions;
     @OneToMany(mappedBy = "user")
-    @JsonIgnore
     private List<Exercise> exerciseList;
 
     @OneToMany(mappedBy = "author")
-    @JsonIgnore
     private List<Ticket> ticketList;
 
 }

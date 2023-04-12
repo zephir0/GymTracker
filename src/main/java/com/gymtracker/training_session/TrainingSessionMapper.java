@@ -13,4 +13,6 @@ public interface TrainingSessionMapper {
     TrainingSession toEntity(TrainingSessionDto trainingSessionDto,
                              User user);
 
+    TrainingSessionResponseDto toDto(TrainingSession trainingSession);
+
 }

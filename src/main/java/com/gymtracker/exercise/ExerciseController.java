@@ -30,8 +30,8 @@ public class ExerciseController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<Exercise>> getExercises() {
-        List<Exercise> allExercises = exerciseService.getAllExercises();
+    public ResponseEntity<List<ExerciseResponseDto>> getExercises() {
+        List<ExerciseResponseDto> allExercises = exerciseService.getAllExercises();
         return new ResponseEntity<>(allExercises, HttpStatus.OK);
     }
 

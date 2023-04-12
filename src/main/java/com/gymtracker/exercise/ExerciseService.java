@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -46,9 +47,12 @@ public class ExerciseService {
     }
 
 
-    public List<Exercise> getAllExercises() {
+    public List<ExerciseResponseDto> getAllExercises() {
         Long id = userService.getLoggedUser().getId();
-        return exerciseRepository.findAllByUserIdOrAdminCreated(id, true);
+        return exerciseRepository.findAllByUserIdOrAdminCreated(id, true)
+                .stream()
+                .map(exerciseMapper::toDto)
+                .collect(Collectors.toList());
     }
 
 

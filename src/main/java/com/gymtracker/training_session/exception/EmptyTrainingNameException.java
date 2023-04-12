@@ -1,4 +1,4 @@
-package com.gymtracker.gym_diary.exception;
+package com.gymtracker.training_session.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

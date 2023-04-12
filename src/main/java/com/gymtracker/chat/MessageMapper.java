@@ -2,8 +2,6 @@ package com.gymtracker.chat;
 
 import com.gymtracker.ticket.Ticket;
 import com.gymtracker.user.entity.User;
-import org.aspectj.lang.annotation.After;
-import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -22,6 +20,8 @@ public interface MessageMapper {
     Message toEntity(User user,
                      MessageDto messageDto,
                      Ticket ticket);
+
+    MessageResponseDto toDto(Message message);
 }
 
 

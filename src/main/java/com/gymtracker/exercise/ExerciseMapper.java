@@ -12,6 +12,8 @@ public interface ExerciseMapper {
     Exercise toEntity(ExerciseDto exerciseDto,
                       User user);
 
+    ExerciseResponseDto toDto(Exercise exercise);
+
     default boolean isAdmin(User user) {
         return user.getUserRole().equals(UserRoles.ADMIN);
     }

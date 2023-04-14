@@ -1,11 +1,10 @@
 package com.gymtracker.chat.exception;
 
+import com.gymtracker.utils.ApiException;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(value = HttpStatus.UNAUTHORIZED, reason = "You are not authorized to get messages in that ticket channel")
-public class NotAuthorizedToGetMessagesException extends RuntimeException {
+public class NotAuthorizedToGetMessagesException extends ApiException {
     public NotAuthorizedToGetMessagesException(String message) {
-        super(message);
+        super(HttpStatus.UNAUTHORIZED, message);
     }
 }

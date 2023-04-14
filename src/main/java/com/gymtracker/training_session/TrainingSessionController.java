@@ -1,12 +1,13 @@
 package com.gymtracker.training_session;
 
+import com.gymtracker.response.SuccessResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -17,34 +18,39 @@ public class TrainingSessionController {
     private final TrainingSessionService trainingSessionService;
 
     @PostMapping
-    ResponseEntity<String> createDiary(@RequestBody @Valid TrainingSessionDto trainingSessionDto) {
+    ResponseEntity<SuccessResponse> createDiary(@RequestBody @Validated TrainingSessionDto trainingSessionDto) {
         trainingSessionService.createTrainingSession(trainingSessionDto);
-        return new ResponseEntity<>("Gym diary has been created", HttpStatus.CREATED);
+        SuccessResponse successResponse = new SuccessResponse(HttpStatus.CREATED, "Training session has been created", LocalDateTime.now());
+        return new ResponseEntity<>(successResponse, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    ResponseEntity<String> editDiary(@PathVariable Long id,
-                                     @Valid @RequestBody TrainingSessionDto trainingSessionDto) {
+    ResponseEntity<SuccessResponse> editDiary(@PathVariable Long id,
+                                              @RequestBody @Validated TrainingSessionDto trainingSessionDto) {
         trainingSessionService.editTrainingSession(id, trainingSessionDto);
-        return new ResponseEntity<>("Gym diare has been deleted", HttpStatus.OK);
+        SuccessResponse successResponse = new SuccessResponse(HttpStatus.OK, "Training session has been deleted", LocalDateTime.now());
+        return new ResponseEntity<>(successResponse, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    ResponseEntity<String> deleteDiary(@PathVariable Long id) {
+    ResponseEntity<SuccessResponse> deleteDiary(@PathVariable Long id) {
         trainingSessionService.deleteTrainingSession(id);
-        return new ResponseEntity<>("Gym diare has been deleted", HttpStatus.OK);
+        SuccessResponse successResponse = new SuccessResponse(HttpStatus.OK, "Training session has been deleted", LocalDateTime.now());
+        return new ResponseEntity<>(successResponse, HttpStatus.OK);
     }
 
     @GetMapping("/user")
-    ResponseEntity<List<TrainingSessionResponseDto>> getAllGymDiariesForLoggedUser() {
+    ResponseEntity<SuccessResponse> getAllGymDiariesForLoggedUser() {
         List<TrainingSessionResponseDto> gymDiaries = trainingSessionService.getAllTrainingSessionsForLoggedUser();
-        return new ResponseEntity<>(gymDiaries, HttpStatus.OK);
+        SuccessResponse successResponse = new SuccessResponse(HttpStatus.OK, gymDiaries, LocalDateTime.now());
+        return new ResponseEntity<>(successResponse, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    ResponseEntity<TrainingSessionResponseDto> getTrainingSessionById(@PathVariable Long id) {
+    ResponseEntity<SuccessResponse> getTrainingSessionById(@PathVariable Long id) {
         TrainingSessionResponseDto trainingSessionById = trainingSessionService.getTrainingSessionById(id);
-        return new ResponseEntity<>(trainingSessionById, HttpStatus.OK);
+        SuccessResponse successResponse = new SuccessResponse(HttpStatus.OK, trainingSessionById, LocalDateTime.now());
+        return new ResponseEntity<>(successResponse, HttpStatus.OK);
     }
 
 }

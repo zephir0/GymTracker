@@ -1,6 +1,9 @@
 package com.gymtracker.chat;
 
+import com.gymtracker.response.SuccessResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -9,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -24,8 +28,10 @@ public class MessageController {
     }
 
     @GetMapping()
-    public List<MessageResponseDto> messageList(@PathVariable Long ticketId) {
-        return messageService.getMessageList(ticketId);
+    public ResponseEntity<SuccessResponse> messageList(@PathVariable Long ticketId) {
+        List<MessageResponseDto> messageList = messageService.getMessageList(ticketId);
+        SuccessResponse successResponse = new SuccessResponse(HttpStatus.OK, messageList, LocalDateTime.now());
+        return new ResponseEntity<>(successResponse, HttpStatus.OK);
     }
 
 }

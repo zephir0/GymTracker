@@ -2,7 +2,7 @@ package com.gymtracker.auth;
 
 import com.gymtracker.auth.exception.UserAlreadyExistException;
 import com.gymtracker.auth.token.JwtTokenProvider;
-import com.gymtracker.user.*;
+import com.gymtracker.user.UserRepository;
 import com.gymtracker.user.dto.UserLoginDto;
 import com.gymtracker.user.dto.UserRegisterDto;
 import com.gymtracker.user.entity.User;
@@ -15,11 +15,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
+
+import javax.validation.Valid;
 
 @RequiredArgsConstructor
 @Service
-@Validated
 public class AuthorizationService {
     private final AuthenticationManager authenticationManager;
     private final UserRegisterMapper userRegisterMapper;
@@ -34,7 +34,7 @@ public class AuthorizationService {
         userRepository.save(user);
     }
 
-    public ResponseEntity<String> login(UserLoginDto userLoginDto) {
+    public ResponseEntity<String> login( UserLoginDto userLoginDto) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userLoginDto.login(), userLoginDto.password()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String generatedToken = jwtTokenProvider.generateToken(authentication);

@@ -1,11 +1,10 @@
 package com.gymtracker.exercise.exception;
 
+import com.gymtracker.utils.ApiException;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(value = HttpStatus.NOT_ACCEPTABLE, reason = "You need to insert an exercise description")
-public class EmptyExerciseDescriptionException extends RuntimeException {
+public class EmptyExerciseDescriptionException extends ApiException {
     public EmptyExerciseDescriptionException(String message) {
-        super(message);
+        super(HttpStatus.NOT_ACCEPTABLE, message);
     }
 }

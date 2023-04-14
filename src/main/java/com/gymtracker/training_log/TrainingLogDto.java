@@ -1,5 +1,11 @@
 package com.gymtracker.training_log;
 
 
-public record TrainingLogDto(Integer reps, Integer weight, String personalNotes, Long exerciseId, Long trainingSessionId) {
+import org.springframework.lang.NonNull;
+
+public record TrainingLogDto(@NonNull Integer reps,
+                             Integer weight,
+                             @NonNull String personalNotes,
+                             @NonNull Long exerciseId,
+                             @NonNull Long trainingSessionId) {
 }

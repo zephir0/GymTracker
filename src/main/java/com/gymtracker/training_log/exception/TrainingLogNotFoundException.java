@@ -1,11 +1,10 @@
 package com.gymtracker.training_log.exception;
 
+import com.gymtracker.utils.ApiException;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "This gym diary doesn't contain any logs")
-public class TrainingLogNotFoundException extends RuntimeException {
+public class TrainingLogNotFoundException extends ApiException {
     public TrainingLogNotFoundException(String message) {
-        super(message);
+        super(HttpStatus.NOT_FOUND, message);
     }
 }

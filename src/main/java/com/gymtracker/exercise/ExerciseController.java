@@ -1,12 +1,14 @@
 package com.gymtracker.exercise;
 
+import com.gymtracker.response.SuccessResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
@@ -17,27 +19,32 @@ public class ExerciseController {
 
 
     @PostMapping
-    public ResponseEntity<String> createExercise(@RequestBody @Valid ExerciseDto exerciseDto) {
+    public ResponseEntity<SuccessResponse> createExercise(@RequestBody @Validated ExerciseDto exerciseDto) {
         exerciseService.createExercise(exerciseDto);
-        return new ResponseEntity<>("Exercise created successfully", HttpStatus.CREATED);
+        SuccessResponse successResponse = new SuccessResponse(HttpStatus.CREATED, "Exercise created successfully", LocalDateTime.now());
+        return new ResponseEntity<>(successResponse, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> editExercise(@PathVariable Long id,
-                                               @RequestBody ExerciseDto exerciseDto) {
+    public ResponseEntity<SuccessResponse> editExercise(@PathVariable Long id,
+                                                        @RequestBody @Validated ExerciseDto exerciseDto) {
         exerciseService.editExercise(id, exerciseDto);
-        return new ResponseEntity<>("Exercise updated successfully", HttpStatus.OK);
+
+        SuccessResponse successResponse = new SuccessResponse(HttpStatus.OK, "Exercise updated successfully", LocalDateTime.now());
+        return new ResponseEntity<>(successResponse, HttpStatus.OK);
     }
 
     @GetMapping()
-    public ResponseEntity<List<ExerciseResponseDto>> getExercises() {
+    public ResponseEntity<SuccessResponse> getExercises() {
         List<ExerciseResponseDto> allExercises = exerciseService.getAllExercises();
-        return new ResponseEntity<>(allExercises, HttpStatus.OK);
+        SuccessResponse successResponse = new SuccessResponse(HttpStatus.OK, allExercises, LocalDateTime.now());
+        return new ResponseEntity<>(successResponse, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteExercise(@PathVariable Long id) {
+    public ResponseEntity<SuccessResponse> deleteExercise(@PathVariable Long id) {
         exerciseService.deleteExercise(id);
-        return new ResponseEntity<>("Exercise deleted successfully", HttpStatus.OK);
+        SuccessResponse successResponse = new SuccessResponse(HttpStatus.OK, "Exercise deleted successfully", LocalDateTime.now());
+        return new ResponseEntity<>(successResponse, HttpStatus.OK);
     }
 }

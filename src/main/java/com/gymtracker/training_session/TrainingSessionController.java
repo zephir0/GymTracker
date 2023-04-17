@@ -40,17 +40,15 @@ public class TrainingSessionController {
     }
 
     @GetMapping("/user")
-    ResponseEntity<SuccessResponse> getAllGymDiariesForLoggedUser() {
+    ResponseEntity<List<TrainingSessionResponseDto>> getAllGymDiariesForLoggedUser() {
         List<TrainingSessionResponseDto> gymDiaries = trainingSessionService.getAllTrainingSessionsForLoggedUser();
-        SuccessResponse successResponse = new SuccessResponse(HttpStatus.OK, gymDiaries, LocalDateTime.now());
-        return new ResponseEntity<>(successResponse, HttpStatus.OK);
+        return new ResponseEntity<>(gymDiaries, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    ResponseEntity<SuccessResponse> getTrainingSessionById(@PathVariable Long id) {
+    ResponseEntity<TrainingSessionResponseDto> getTrainingSessionById(@PathVariable Long id) {
         TrainingSessionResponseDto trainingSessionById = trainingSessionService.getTrainingSessionById(id);
-        SuccessResponse successResponse = new SuccessResponse(HttpStatus.OK, trainingSessionById, LocalDateTime.now());
-        return new ResponseEntity<>(successResponse, HttpStatus.OK);
+        return new ResponseEntity<>(trainingSessionById, HttpStatus.OK);
     }
 
 }

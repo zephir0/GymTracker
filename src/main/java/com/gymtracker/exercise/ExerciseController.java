@@ -35,10 +35,9 @@ public class ExerciseController {
     }
 
     @GetMapping()
-    public ResponseEntity<SuccessResponse> getExercises() {
+    public ResponseEntity<List<ExerciseResponseDto>> getExercises() {
         List<ExerciseResponseDto> allExercises = exerciseService.getAllExercises();
-        SuccessResponse successResponse = new SuccessResponse(HttpStatus.OK, allExercises, LocalDateTime.now());
-        return new ResponseEntity<>(successResponse, HttpStatus.OK);
+        return new ResponseEntity<>(allExercises, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

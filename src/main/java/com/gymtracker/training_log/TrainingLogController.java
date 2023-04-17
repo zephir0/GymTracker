@@ -35,10 +35,9 @@ public class TrainingLogController {
     }
 
     @GetMapping("/gym-diary/{id}")
-    public ResponseEntity<SuccessResponse> getTrainingLogsForTrainingSession(@PathVariable Long id) {
+    public ResponseEntity<List<TrainingLogResponseDto>> getTrainingLogsForTrainingSession(@PathVariable Long id) {
         List<TrainingLogResponseDto> trainingLogsForTrainingSession = trainingLogService.getTrainingLogsForTrainingSession(id);
-        SuccessResponse successResponse = new SuccessResponse(HttpStatus.OK, trainingLogsForTrainingSession, LocalDateTime.now());
-        return new ResponseEntity<>(successResponse, HttpStatus.OK);
+        return new ResponseEntity<>(trainingLogsForTrainingSession, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

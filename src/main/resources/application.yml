@@ -4,7 +4,6 @@ app:
     expiration-in-ms: 36000000
 
 
-
 spring:
   cache:
     type: simple
@@ -26,3 +25,5 @@ spring:
 server:
   error:
     include-stacktrace: never
+
+

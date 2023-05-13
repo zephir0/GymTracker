@@ -1,6 +1,5 @@
 package com.gymtracker.chat;
 
-import com.gymtracker.chat.exception.NotAuthorizedToGetMessagesException;
 import com.gymtracker.ticket.Ticket;
 import com.gymtracker.ticket.TicketService;
 import com.gymtracker.user.UserService;
@@ -37,17 +36,10 @@ public class MessageService {
         messageRepository.save(message);
     }
 
-    public List<MessageResponseDto> getMessageList(Long ticketId) {
-        User loggedUser = userService.getLoggedUser();
-        Ticket ticket = getAuthorizedTicket(ticketId, loggedUser);
-        return convertMessagesToDtoList(ticket.getMessageList());
-    }
 
-    private Ticket getAuthorizedTicket(Long ticketId,
-                                       User loggedUser) {
-        return ticketService.findById(ticketId)
-                .filter(ticket -> ticket.getAuthor().getId().equals(loggedUser.getId()))
-                .orElseThrow(() -> new NotAuthorizedToGetMessagesException("You are not authorized to get messages in that ticket channel"));
+    public List<MessageResponseDto> getMessageList(Long ticketId) {
+        Ticket ticket = ticketService.getById(ticketId);
+        return convertMessagesToDtoList(ticket.getMessageList());
     }
 
     private List<MessageResponseDto> convertMessagesToDtoList(List<Message> messages) {

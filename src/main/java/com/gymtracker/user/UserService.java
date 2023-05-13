@@ -9,7 +9,6 @@ import com.gymtracker.user.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -21,18 +20,14 @@ public class UserService {
     private final UserMapper userMapper;
 
 
-    public Optional<UserLoginDto> findCredentialsByLogin(String login) {
+    public Optional<UserLoginDto> getCredentialsByLogin(String login) {
         return userRepository.findByLogin(login).map(UserLoginMapper::toEntity);
     }
 
 
     public User getLoggedUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return Optional.of(authentication)
-                .filter(Authentication::isAuthenticated)
-                .map(Authentication::getName)
-                .flatMap(userRepository::findByLogin)
-                .orElseThrow(() -> new UserNotLoggedInException("User is not logged."));
+        return Optional.of(authentication).filter(Authentication::isAuthenticated).map(Authentication::getName).flatMap(userRepository::findByLogin).orElseThrow(() -> new UserNotLoggedInException("User is not logged."));
     }
 
     public UserResponseDto getLoggedUserInfo() {
@@ -44,11 +39,4 @@ public class UserService {
     public User getReference(Long userId) {
         return userRepository.getReferenceById(userId);
     }
-
-
-    public User findById(Long id) {
-        return userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("User doesn't exist"));
-    }
-
-
 }

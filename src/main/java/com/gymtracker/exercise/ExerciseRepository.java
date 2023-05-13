@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 @EnableCaching
@@ -16,7 +15,7 @@ public interface ExerciseRepository extends JpaRepository<Exercise, Long> {
     List<Exercise> findAllByUserIdOrAdminCreated(Long userId,
                                                  boolean isAdminCreated);
 
-    Optional<Exercise> getReferenceByDescription(String description);
+    Exercise getReferenceById(Long exerciseId);
 
     @Override
     @CacheEvict(cacheNames = "exercises", allEntries = true)

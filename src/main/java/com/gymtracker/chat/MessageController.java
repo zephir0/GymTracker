@@ -26,7 +26,7 @@ public class MessageController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<MessageResponseDto>> messageList(@PathVariable Long ticketId) {
+    public ResponseEntity<List<MessageResponseDto>> getMessageList(@PathVariable Long ticketId) {
         List<MessageResponseDto> messageList = messageService.getMessageList(ticketId);
         return new ResponseEntity<>(messageList, HttpStatus.OK);
     }

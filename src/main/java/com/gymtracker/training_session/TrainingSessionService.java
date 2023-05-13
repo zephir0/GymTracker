@@ -8,8 +8,8 @@ import com.gymtracker.user.entity.UserRoles;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,53 +23,48 @@ public class TrainingSessionService {
     public void createTrainingSession(TrainingSessionDto trainingSessionDto) {
 
         TrainingSession trainingSession = trainingSessionMapper.toEntity(trainingSessionDto, userService.getLoggedUser());
-        trainingSession.setTrainingDate(LocalDateTime.now());
         trainingSessionRepository.save(trainingSession);
     }
 
     public void editTrainingSession(Long id,
                                     TrainingSessionDto trainingSessionDto) {
-        trainingSessionRepository.findById(id).ifPresentOrElse(trainingSession -> {
-            if (isTrainingSessionCreatorOrAdmin(trainingSession, userService.getLoggedUser())) {
-                trainingSession.setTrainingName(trainingSessionDto.trainingName());
-                trainingSessionRepository.save(trainingSession);
-            } else
-                throw new UnauthorizedTrainingSessionAccessException("You are not a training session creator or admin.");
+        trainingSessionRepository.findById(id).map(this::isTrainingSessionCreatorOrAdmin).ifPresentOrElse(trainingSession -> {
+            trainingSession.setTrainingName(trainingSessionDto.trainingName());
+            trainingSessionRepository.save(trainingSession);
         }, () -> {
             throw new TrainingSessionNotFoundException("Training Session doesn't exist in database");
         });
     }
 
     public void deleteTrainingSession(Long id) {
-        trainingSessionRepository.findById(id).ifPresentOrElse(trainingSession -> {
-            if (isTrainingSessionCreatorOrAdmin(trainingSession, userService.getLoggedUser())) {
-                trainingSessionRepository.deleteById(id);
-            } else
-                throw new UnauthorizedTrainingSessionAccessException("You are not a training session creator or admin.");
+        trainingSessionRepository.findById(id).map(this::isTrainingSessionCreatorOrAdmin).ifPresentOrElse(trainingSession -> {
+            trainingSessionRepository.deleteById(id);
         }, () -> {
             throw new TrainingSessionNotFoundException("Training session doesn't exist in database.");
         });
     }
 
     public TrainingSessionResponseDto getTrainingSessionById(Long id) {
-        TrainingSession trainingSession = trainingSessionRepository.findById(id).map(session -> {
-            if (isTrainingSessionCreatorOrAdmin(session, userService.getLoggedUser())) {
-                return session;
-            } else
-                throw new UnauthorizedTrainingSessionAccessException("You are not authorized to access that training session.");
-        }).orElseThrow(() -> new TrainingSessionNotFoundException("Training session not found"));
-        return trainingSessionMapper.toDto(trainingSession);
-    }
-
-    public TrainingSession findById(Long id) {
         return trainingSessionRepository.findById(id)
-                .orElseThrow(() -> new TrainingSessionNotFoundException("Training session not found."));
+                .map(this::isTrainingSessionCreatorOrAdmin)
+                .map(trainingSessionMapper::toDto)
+                .orElseThrow(() -> new TrainingSessionNotFoundException("Training session not found"));
+    }
+
+    public Optional<TrainingSession> getById(Long id) {
+        return trainingSessionRepository.findById(id);
     }
 
 
-    public boolean isTrainingSessionCreatorOrAdmin(TrainingSession trainingSession,
-                                                   User user) {
-        return (user.getUserRole().equals(UserRoles.ADMIN) || trainingSession.getUser().getId().equals(user.getId()));
+    private TrainingSession isTrainingSessionCreatorOrAdmin(TrainingSession trainingSession) {
+        if (isAuthorized(trainingSession)) {
+            return trainingSession;
+        } else
+            throw new UnauthorizedTrainingSessionAccessException("You are not authorized to access that training session.");
+    }
+
+    public boolean isAuthorized(TrainingSession trainingSession) {
+        return userService.getLoggedUser().getUserRole().equals(UserRoles.ADMIN) || trainingSession.getUser().getId().equals(userService.getLoggedUser().getId());
     }
 
 

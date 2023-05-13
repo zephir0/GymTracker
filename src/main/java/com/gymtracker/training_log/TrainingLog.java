@@ -1,6 +1,5 @@
 package com.gymtracker.training_log;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gymtracker.exercise.Exercise;
 import com.gymtracker.training_session.TrainingSession;
 import lombok.Getter;
@@ -41,8 +40,8 @@ public class TrainingLog {
     private Exercise exercise;
 
     @ManyToOne
-    @NotNull(message = "trainingLog.trainingSessionId.notNull")
     @JoinColumn(name = "training_session_id")
+    @NotNull(message = "trainingLog.trainingSessionId.notNull")
     private TrainingSession trainingSession;
 
 }

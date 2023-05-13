@@ -7,10 +7,5 @@ import java.util.List;
 
 @Repository
 public interface TrainingLogRepository extends JpaRepository<TrainingLog, Long> {
-    List<TrainingLog> findAllByExerciseIdAndTrainingSessionId(Long exerciseId,
-                                                       Long gymDiaryId);
-
-    List<TrainingLog> findAllByTrainingSessionId(Long id);
-
     List<TrainingLog> findAllByExerciseId(Long id);
 }

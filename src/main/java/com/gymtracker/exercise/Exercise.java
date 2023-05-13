@@ -1,6 +1,5 @@
 package com.gymtracker.exercise;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gymtracker.training_log.TrainingLog;
 import com.gymtracker.user.entity.User;
 import lombok.Getter;

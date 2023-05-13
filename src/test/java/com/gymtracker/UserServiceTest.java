@@ -49,7 +49,7 @@ class UserServiceTest {
     void findCredentialsByLogin_whenUserExists_returnsUserLoginDto() {
         when(userRepository.findByLogin(anyString())).thenReturn(Optional.of(user));
 
-        Optional<UserLoginDto> result = userService.findCredentialsByLogin("testUser");
+        Optional<UserLoginDto> result = userService.getCredentialsByLogin("testUser");
 
         assertEquals(userLoginDto, result.get());
     }
@@ -58,7 +58,7 @@ class UserServiceTest {
     void findCredentialsByLogin_whenUserDoesNotExist_returnsEmptyOptional() {
         when(userRepository.findByLogin(anyString())).thenReturn(Optional.empty());
 
-        Optional<UserLoginDto> result = userService.findCredentialsByLogin("nonExistentUser");
+        Optional<UserLoginDto> result = userService.getCredentialsByLogin("nonExistentUser");
 
         assertEquals(Optional.empty(), result);
     }

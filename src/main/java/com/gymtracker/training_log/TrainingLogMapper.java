@@ -1,5 +1,6 @@
 package com.gymtracker.training_log;
 
+import com.gymtracker.training_session.TrainingSession;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

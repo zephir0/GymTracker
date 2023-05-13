@@ -17,7 +17,7 @@ public class CustomUserDetailsManagerConfig implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
-        return userService.findCredentialsByLogin(login)
+        return userService.getCredentialsByLogin(login)
                 .map(this::createUserDetails)
                 .orElseThrow(() -> new UsernameNotFoundException(String.format("User with login %s not found", login)));
     }

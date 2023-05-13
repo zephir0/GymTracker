@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 public interface TrainingSessionMapper {
 
     @Mapping(target = "user", source = "user")
+    @Mapping(target = "trainingDate", expression = "java(java.time.LocalDateTime.now())")
+
     TrainingSession toEntity(TrainingSessionDto trainingSessionDto,
                              User user);
 

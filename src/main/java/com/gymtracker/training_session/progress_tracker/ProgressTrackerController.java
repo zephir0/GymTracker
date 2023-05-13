@@ -2,6 +2,7 @@ package com.gymtracker.training_session.progress_tracker;
 
 import com.gymtracker.response.SuccessResponse;
 import com.gymtracker.training_log.TrainingLog;
+import com.gymtracker.training_log.TrainingLogResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,9 +20,9 @@ import java.util.List;
 public class ProgressTrackerController {
     private final ProgressTrackerService progressTrackerService;
 
-    @GetMapping("/exercises/{exerciseDescription}/sort-by-max-weight-and-max-rep")
-    public ResponseEntity<SuccessResponse> sortByMaxWeightAndMaxRepForExercise(@PathVariable String exerciseDescription) {
-        List<TrainingLog> sortedByMaxWeightForExercise = progressTrackerService.sortByMaxWeightAndMaxRepForExercise(exerciseDescription);
+    @GetMapping("/exercises/{exerciseId}/sort-by-max-weight-and-max-rep")
+    public ResponseEntity<SuccessResponse> sortByMaxWeightAndMaxRepForExercise(@PathVariable Long exerciseId) {
+        List<TrainingLogResponseDto> sortedByMaxWeightForExercise = progressTrackerService.sortByMaxWeightAndMaxRepForExercise(exerciseId);
         SuccessResponse successResponse = new SuccessResponse(HttpStatus.OK, sortedByMaxWeightForExercise, LocalDateTime.now());
         return new ResponseEntity<>(successResponse, HttpStatus.OK);
     }
@@ -33,10 +34,11 @@ public class ProgressTrackerController {
         return new ResponseEntity<>(successResponse, HttpStatus.OK);
     }
 
-    @GetMapping("/training-sessions/{trainingSessionId}/exercises/{exerciseDescription}/total-weight")
-    public ResponseEntity<SuccessResponse> getTotalWeightForExerciseFromTrainingSession(@PathVariable Long trainingSessionId,
-                                                                                        @PathVariable String exerciseDescription) {
-        Integer totalWeight = progressTrackerService.calculateTotalWeightForExerciseFromTrainingSession(trainingSessionId, exerciseDescription);
+
+    @GetMapping("/training-sessions/{trainingSessionId}/exercises/{exerciseId}/total-weight")
+    public ResponseEntity<SuccessResponse> getTotalWeightForExerciseFromTrainingSession(@PathVariable Long exerciseId,
+                                                                                        @PathVariable Long trainingSessionId) {
+        Integer totalWeight = progressTrackerService.calculateTotalWeightForExerciseFromTrainingSession(exerciseId, trainingSessionId);
         SuccessResponse successResponse = new SuccessResponse(HttpStatus.OK, totalWeight, LocalDateTime.now());
         return new ResponseEntity<>(successResponse, HttpStatus.OK);
     }

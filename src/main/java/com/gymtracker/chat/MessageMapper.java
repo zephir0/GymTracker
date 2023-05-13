@@ -16,7 +16,6 @@ public interface MessageMapper {
     @Mapping(target = "senderId", source = "user.id")
     @Mapping(target = "receiverId", source = "messageDto.receiverId")
     @Mapping(target = "creationDate", expression = "java(localDateTime.now())")
-    @Mapping(target = "ticket", source = "ticket")
     Message toEntity(User user,
                      MessageDto messageDto,
                      Ticket ticket);

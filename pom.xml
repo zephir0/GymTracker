@@ -123,6 +123,15 @@
             <groupId>org.xmlunit</groupId>
             <artifactId>xmlunit-core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>top.jfunc.json</groupId>
+            <artifactId>json-gson</artifactId>
+            <version>1.8.3</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

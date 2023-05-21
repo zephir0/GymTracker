@@ -1,12 +1,12 @@
 package com.gymtracker.training_session;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gymtracker.training_log.TrainingLog;
 import com.gymtracker.user.entity.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.cache.annotation.Cacheable;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -17,6 +17,7 @@ import java.util.List;
 @Setter
 @Getter
 @NoArgsConstructor
+@Cacheable(cacheNames = "training_sessions")
 @Table(name = "training_session")
 public class TrainingSession {
     @Id

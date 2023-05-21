@@ -7,7 +7,7 @@ app:
 spring:
   cache:
     type: simple
-    cache-names: users, exercises, tickets, messages, diaryLogs
+    cache-names: users, exercises, tickets, messages, training_sessions, training_logs
   datasource:
     url: jdbc:mysql://localhost:3306/gym_tracker
     username: root

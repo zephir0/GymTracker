@@ -5,6 +5,7 @@ import com.gymtracker.training_session.TrainingSession;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.cache.annotation.Cacheable;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -14,6 +15,7 @@ import javax.validation.constraints.PositiveOrZero;
 @NoArgsConstructor
 @Setter
 @Getter
+@Cacheable(cacheNames = "training_logs")
 @Table(name = "training_log")
 public class TrainingLog {
     @Id

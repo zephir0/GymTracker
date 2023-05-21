@@ -1,8 +1,8 @@
 package com.gymtracker.configurations;
 
+import com.gymtracker.user.UserService;
 import com.gymtracker.user.dto.UserLoginDto;
 import com.gymtracker.user.entity.UserRoles;
-import com.gymtracker.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.userdetails.User;

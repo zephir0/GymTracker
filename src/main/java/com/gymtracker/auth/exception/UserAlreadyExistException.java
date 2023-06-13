@@ -1,11 +1,10 @@
 package com.gymtracker.auth.exception;
 
+import com.gymtracker.utils.ApiException;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(value = HttpStatus.CONFLICT, reason = "User already exist in database")
-public class UserAlreadyExistException extends RuntimeException {
+public class UserAlreadyExistException extends ApiException {
     public UserAlreadyExistException(String message) {
-        super(message);
+        super(HttpStatus.CONFLICT, message);
     }
 }

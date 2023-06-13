@@ -1,108 +1,21 @@
 package com.gymtracker.training_log;
 
-import com.gymtracker.exercise.ExerciseService;
-import com.gymtracker.exercise.exception.ExerciseNotFoundException;
-import com.gymtracker.training_log.exception.TrainingLogNotFoundException;
-import com.gymtracker.training_session.TrainingSession;
-import com.gymtracker.training_session.TrainingSessionService;
-import com.gymtracker.training_session.exception.UnauthorizedTrainingSessionAccessException;
-import com.gymtracker.user.UserService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
-import java.util.stream.Collectors;
 
-@Service
-@RequiredArgsConstructor
-public class TrainingLogService {
+public interface TrainingLogService {
+    void createTrainingLog(TrainingLogDto trainingLogDto);
 
-    private final TrainingLogRepository trainingLogRepository;
-    private final TrainingLogMapper trainingLogMapper;
-    private final TrainingSessionService trainingSessionService;
-    private final ExerciseService exerciseService;
-    private final UserService userService;
+    void deleteTrainingLog(Long id);
 
-    public void createTrainingLog(TrainingLogDto trainingLogDto) {
+    void editTrainingLog(Long id,
+                         TrainingLogDto trainingLogDto);
 
-        if (exerciseService.existById(trainingLogDto.trainingSessionId())) {
-            throw new ExerciseNotFoundException("Exercise with that id doesn't exist");
-        }
+    List<TrainingLogResponseDto> getTrainingLogsForTrainingSession(Long id);
 
-        TrainingSession trainingSession = trainingSessionService.findById(trainingLogDto.trainingSessionId());
+    List<TrainingLog> getAllByExerciseId(Long exerciseId);
 
-        checkAuthorization(trainingSession);
+    List<TrainingLog> getAllByTrainingSessionId(Long trainingSessionId);
 
-        TrainingLog trainingLog = trainingLogMapper.toEntity(trainingLogDto);
-        trainingLogRepository.save(trainingLog);
-    }
-
-    public void deleteTrainingLog(Long id) {
-        trainingLogRepository.findById(id).ifPresentOrElse(trainingLog -> {
-            checkAuthorization(trainingLog.getTrainingSession());
-            trainingLogRepository.deleteById(trainingLog.getId());
-        }, () -> {
-            throw new TrainingLogNotFoundException("Training log doesn't exist");
-        });
-    }
-
-    public void editTrainingLog(Long id,
-                                TrainingLogDto trainingLogDto) {
-        trainingLogRepository.findById(id).ifPresentOrElse(trainingLog -> {
-            checkAuthorization(trainingLog.getTrainingSession());
-            trainingLog.setReps(trainingLogDto.reps());
-            trainingLog.setWeight(trainingLogDto.weight());
-            trainingLog.setPersonalNotes(trainingLogDto.personalNotes());
-            trainingLogRepository.save(trainingLog);
-        }, () -> {
-            throw new TrainingLogNotFoundException("Training log doesn't exist");
-        });
-    }
-
-
-    public List<TrainingLogResponseDto> getTrainingLogsForTrainingSession(Long id) {
-        TrainingSession trainingSession = trainingSessionService.findById(id);
-
-        checkAuthorization(trainingSession);
-
-        List<TrainingLogResponseDto> trainingLogResponseDtoList = trainingSession.getTrainingLogs()
-                .stream()
-                .map(trainingLogMapper::toDto)
-                .collect(Collectors.toList());
-
-        if (trainingLogResponseDtoList.isEmpty()) {
-            throw new TrainingLogNotFoundException("There is no logs in that training session");
-        } else return trainingLogResponseDtoList;
-
-    }
-
-    public List<TrainingLog> findAllByExerciseId(Long exerciseId) {
-        return filterAuthorizedTrainingLogs(trainingLogRepository.findAllByExerciseId(exerciseId));
-    }
-
-    public List<TrainingLog> findAllByTrainingSessionId(Long trainingSessionId) {
-        return filterAuthorizedTrainingLogs(trainingLogRepository.findAllByTrainingSessionId(trainingSessionId));
-    }
-
-    public List<TrainingLog> findAllByExerciseIdAndTrainingSessionId(Long exerciseId,
-                                                                     Long trainingSessionId) {
-        return filterAuthorizedTrainingLogs(trainingLogRepository.findAllByExerciseIdAndTrainingSessionId(exerciseId, trainingSessionId));
-    }
-
-    private void checkAuthorization(TrainingSession trainingSession) {
-        if (!trainingSessionService.isTrainingSessionCreatorOrAdmin(trainingSession, userService.getLoggedUser())) {
-            throw new UnauthorizedTrainingSessionAccessException("You are not a training session creator or admin");
-        }
-    }
-
-    private List<TrainingLog> filterAuthorizedTrainingLogs(List<TrainingLog> trainingLogs) {
-        return trainingLogs.stream().filter(trainingLog -> {
-            try {
-                checkAuthorization(trainingLog.getTrainingSession());
-                return true;
-            } catch (UnauthorizedTrainingSessionAccessException e) {
-                return false;
-            }
-        }).collect(Collectors.toList());
-    }
+    List<TrainingLog> getAllByExerciseIdAndTrainingSessionId(Long exerciseId,
+                                                             Long trainingSessionId);
 }

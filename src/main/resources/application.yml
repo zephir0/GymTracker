@@ -4,11 +4,12 @@ app:
     expiration-in-ms: 36000000
 
 
-
 spring:
+  main:
+    allow-circular-references: true
   cache:
     type: simple
-    cache-names: users, exercises, tickets, messages, diaryLogs
+    cache-names: users, exercises, tickets, messages, training_sessions, training_logs
   datasource:
     url: jdbc:mysql://localhost:3306/gym_tracker
     username: root
@@ -26,3 +27,5 @@ spring:
 server:
   error:
     include-stacktrace: never
+
+

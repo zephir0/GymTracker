@@ -1,15 +1,15 @@
 package com.gymtracker.training_session;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gymtracker.training_log.TrainingLog;
+import com.gymtracker.training_routine.TrainingRoutine;
 import com.gymtracker.user.entity.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.cache.annotation.Cacheable;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -17,6 +17,7 @@ import java.util.List;
 @Setter
 @Getter
 @NoArgsConstructor
+@Cacheable(cacheNames = "training_sessions")
 @Table(name = "training_session")
 public class TrainingSession {
     @Id
@@ -28,14 +29,14 @@ public class TrainingSession {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime trainingDate;
 
-    @Column(name = "training_name")
-    @NotEmpty(message = "trainingSession.trainingName.notNull")
-    private String trainingName;
-
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
     @OneToMany(mappedBy = "trainingSession")
     private List<TrainingLog> trainingLogs;
+
+    @ManyToOne
+    @JoinColumn(name = "routine_id")
+    private TrainingRoutine trainingRoutine;
 }

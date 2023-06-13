@@ -16,7 +16,7 @@ public class UserController {
 
     @GetMapping("/logged-user")
     ResponseEntity<UserResponseDto> getLoggedUserInfo() {
-        UserResponseDto loggedUserInfo = userService.getLoggedUserInfo();
+        UserResponseDto loggedUserInfo = userService.getDetailsOfLoggedUser();
         return new ResponseEntity<>(loggedUserInfo, HttpStatus.OK);
     }
 }

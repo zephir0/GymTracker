@@ -1,5 +1,6 @@
 package com.gymtracker.training_log;
 
+import com.gymtracker.response.SuccessResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -7,7 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
@@ -18,17 +19,19 @@ public class TrainingLogController {
     private final TrainingLogService trainingLogService;
 
     @PostMapping
-    public ResponseEntity<String> createTrainingLog(@RequestBody @Valid TrainingLogDto trainingLogDto) {
+    public ResponseEntity<SuccessResponse> createTrainingLog(@RequestBody @Validated TrainingLogDto trainingLogDto) {
         trainingLogService.createTrainingLog(trainingLogDto);
-        return new ResponseEntity<>("Training log has been created successfully", HttpStatus.CREATED);
+        SuccessResponse successResponse = new SuccessResponse(HttpStatus.CREATED, "Training log has been created successfully", LocalDateTime.now());
+        return new ResponseEntity<>(successResponse, HttpStatus.CREATED);
     }
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> editTrainingLog(@PathVariable Long id,
-                                                  @RequestBody TrainingLogDto trainingLogDto) {
+    public ResponseEntity<SuccessResponse> editTrainingLog(@PathVariable Long id,
+                                                           @RequestBody @Validated TrainingLogDto trainingLogDto) {
         trainingLogService.editTrainingLog(id, trainingLogDto);
-        return new ResponseEntity<>("Training log id: " + id + " has been changed", HttpStatus.OK);
+        SuccessResponse successResponse = new SuccessResponse(HttpStatus.OK, "Training log id: " + id + " has been changed", LocalDateTime.now());
+        return new ResponseEntity<>(successResponse, HttpStatus.OK);
     }
 
     @GetMapping("/gym-diary/{id}")
@@ -38,9 +41,10 @@ public class TrainingLogController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteTrainingLogById(@PathVariable Long id) {
+    public ResponseEntity<SuccessResponse> deleteTrainingLogById(@PathVariable Long id) {
         trainingLogService.deleteTrainingLog(id);
-        return new ResponseEntity<>("Training log id: " + id + " has been deleted", HttpStatus.OK);
+        SuccessResponse successResponse = new SuccessResponse(HttpStatus.OK, "Training log id: " + id + " has been deleted", LocalDateTime.now());
+        return new ResponseEntity<>(successResponse, HttpStatus.OK);
     }
 
 }

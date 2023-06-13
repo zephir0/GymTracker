@@ -1,8 +1,8 @@
 package com.gymtracker.configurations;
 
+import com.gymtracker.user.UserService;
 import com.gymtracker.user.dto.UserLoginDto;
 import com.gymtracker.user.entity.UserRoles;
-import com.gymtracker.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.userdetails.User;
@@ -17,7 +17,7 @@ public class CustomUserDetailsManagerConfig implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
-        return userService.findCredentialsByLogin(login)
+        return userService.getCredentialsByLogin(login)
                 .map(this::createUserDetails)
                 .orElseThrow(() -> new UsernameNotFoundException(String.format("User with login %s not found", login)));
     }

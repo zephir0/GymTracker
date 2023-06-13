@@ -1,11 +1,10 @@
 package com.gymtracker.exercise.exception;
 
+import com.gymtracker.utils.ApiException;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(value = HttpStatus.UNAUTHORIZED, reason = "You are not admin or creator of that exercise")
-public class NotAuthorizedToAccessExerciseException extends RuntimeException {
+public class NotAuthorizedToAccessExerciseException extends ApiException {
     public NotAuthorizedToAccessExerciseException(String message) {
-        super(message);
+        super(HttpStatus.UNAUTHORIZED, message);
     }
 }

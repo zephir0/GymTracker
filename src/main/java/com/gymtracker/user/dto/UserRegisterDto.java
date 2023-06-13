@@ -1,9 +1,7 @@
 package com.gymtracker.user.dto;
 
-import com.gymtracker.user.entity.UserRoles;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 
-import java.time.LocalDateTime;
-
-public record UserRegisterDto(String emailAddress, String login, String password, LocalDateTime creationDate,
-                              UserRoles userRoles) {
+public record UserRegisterDto(@NotNull @Email String emailAddress, @NotNull String login, @NotNull String password) {
 }

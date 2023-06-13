@@ -1,5 +1,7 @@
 package com.gymtracker.training_session;
 
-public record TrainingSessionDto(String trainingName) {
+import org.springframework.lang.NonNull;
+
+public record TrainingSessionDto(@NonNull String trainingName) {
 }
 

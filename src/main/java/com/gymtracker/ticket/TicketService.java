@@ -1,20 +1,20 @@
 package com.gymtracker.ticket;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import java.util.List;
 
-import java.util.Optional;
+public interface TicketService {
+    void createTicket(TicketDto ticketDto);
 
-@Service
-@RequiredArgsConstructor
-public class TicketService {
-    private final TicketRepository ticketRepository;
+    void editTicket(Long ticketId,
+                    TicketDto ticketDto);
 
-    public Optional<Ticket> findById(Long id) {
-        return ticketRepository.findById(id);
-    }
+    void deleteTicket(Long id);
 
-    public Ticket getReference(Long ticketId) {
-        return ticketRepository.getReferenceById(ticketId);
-    }
+    Ticket getById(Long id);
+
+    List<TicketResponseDto> getAllTicketsForLoggedUser();
+
+    Ticket checkAuthorization(Ticket ticket);
+
+    Ticket getReference(Long ticketId);
 }

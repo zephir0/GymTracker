@@ -1,12 +1,11 @@
 package com.gymtracker.exercise.exception;
 
+import com.gymtracker.utils.ApiException;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Exercise was not found.")
-public class ExerciseNotFoundException extends RuntimeException {
+public class ExerciseNotFoundException extends ApiException {
 
     public ExerciseNotFoundException(String message) {
-        super(message);
+        super(HttpStatus.NOT_FOUND, message);
     }
 }

@@ -1,6 +1,8 @@
 package com.gymtracker.chat;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -24,8 +26,9 @@ public class MessageController {
     }
 
     @GetMapping()
-    public List<MessageResponseDto> messageList(@PathVariable Long ticketId) {
-        return messageService.getMessageList(ticketId);
+    public ResponseEntity<List<MessageResponseDto>> getMessageList(@PathVariable Long ticketId) {
+        List<MessageResponseDto> messageList = messageService.getMessageList(ticketId);
+        return new ResponseEntity<>(messageList, HttpStatus.OK);
     }
 
 }

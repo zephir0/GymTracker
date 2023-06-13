@@ -1,11 +1,10 @@
 package com.gymtracker.user.exception;
 
+import com.gymtracker.utils.ApiException;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(value = HttpStatus.UNAUTHORIZED, reason = "User is not logged in.")
-public class UserNotLoggedInException extends RuntimeException {
+public class UserNotLoggedInException extends ApiException {
     public UserNotLoggedInException(String message) {
-        super(message);
+        super(HttpStatus.UNAUTHORIZED, message);
     }
 }

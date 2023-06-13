@@ -6,6 +6,7 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -14,6 +15,8 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     @Override
     @Cacheable(cacheNames = "tickets")
     Optional<Ticket> findById(Long ticketId);
+
+    List<Ticket> findAllByAuthorId(Long authorId);
 
     @Override
     @CacheEvict(cacheNames = "tickets", allEntries = true)

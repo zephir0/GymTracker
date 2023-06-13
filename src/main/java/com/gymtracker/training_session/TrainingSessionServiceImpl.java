@@ -27,16 +27,16 @@ public class TrainingSessionServiceImpl implements TrainingSessionService {
         trainingSessionRepository.save(trainingSession);
     }
 
-    @Override
-    public void editTrainingSession(Long id,
-                                    TrainingSessionDto trainingSessionDto) {
-        trainingSessionRepository.findById(id).map(this::isTrainingSessionCreatorOrAdmin).ifPresentOrElse(trainingSession -> {
-            trainingSession.setTrainingName(trainingSessionDto.trainingName());
-            trainingSessionRepository.save(trainingSession);
-        }, () -> {
-            throw new TrainingSessionNotFoundException("Training Session doesn't exist in database");
-        });
-    }
+//    @Override
+//    public void editTrainingSession(Long id,
+//                                    TrainingSessionDto trainingSessionDto) {
+//        trainingSessionRepository.findById(id).map(this::isTrainingSessionCreatorOrAdmin).ifPresentOrElse(trainingSession -> {
+//            trainingSession.setTrainingName(trainingSessionDto.trainingName());
+//            trainingSessionRepository.save(trainingSession);
+//        }, () -> {
+//            throw new TrainingSessionNotFoundException("Training Session doesn't exist in database");
+//        });
+//    }
 
     @Override
     public void deleteTrainingSession(Long id) {
@@ -72,6 +72,7 @@ public class TrainingSessionServiceImpl implements TrainingSessionService {
         return trainingSessionRepository.findAllByUser(loggedUser).stream().map(trainingSessionMapper::toDto
         ).collect(Collectors.toList());
     }
+
 
     private TrainingSession isTrainingSessionCreatorOrAdmin(TrainingSession trainingSession) {
         if (isAuthorized(trainingSession)) {

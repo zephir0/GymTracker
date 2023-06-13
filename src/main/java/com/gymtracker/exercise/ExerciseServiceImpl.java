@@ -1,5 +1,6 @@
 package com.gymtracker.exercise;
 
+import com.gymtracker.exercise.exception.ExerciseAlreadyCreatedByAdminException;
 import com.gymtracker.exercise.exception.ExerciseNotFoundException;
 import com.gymtracker.exercise.exception.NotAuthorizedToAccessExerciseException;
 import com.gymtracker.user.UserService;
@@ -23,6 +24,12 @@ public class ExerciseServiceImpl implements ExerciseService {
     public void createExercise(ExerciseDto exerciseDto) {
         User loggedUser = userService.getLoggedUser();
         Exercise exercise = exerciseMapper.toEntity(exerciseDto, loggedUser);
+
+        exerciseRepository.findByDescriptionAndAdminCreated(exercise.getDescription(), true)
+                .ifPresent(existingExercise -> {
+                    throw new ExerciseAlreadyCreatedByAdminException(String.format("Exercise with name '%s' was already created by admin.", existingExercise.getDescription()));
+                });
+
         exerciseRepository.save(exercise);
     }
 

@@ -24,6 +24,7 @@ public interface TrainingSessionRepository extends JpaRepository<TrainingSession
     @CacheEvict(cacheNames = "training_sessions", allEntries = true)
     void delete(TrainingSession entity);
 
+
     @Override
     @CacheEvict(cacheNames = "training_sessions", allEntries = true)
     <S extends TrainingSession> S save(S entity);

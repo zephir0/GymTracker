@@ -5,6 +5,8 @@ app:
 
 
 spring:
+  main:
+    allow-circular-references: true
   cache:
     type: simple
     cache-names: users, exercises, tickets, messages, training_sessions, training_logs

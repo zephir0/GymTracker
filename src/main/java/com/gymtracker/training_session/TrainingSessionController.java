@@ -24,13 +24,13 @@ public class TrainingSessionController {
         return new ResponseEntity<>(successResponse, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
-    ResponseEntity<SuccessResponse> editDiary(@PathVariable Long id,
-                                              @RequestBody @Validated TrainingSessionDto trainingSessionDto) {
-        trainingSessionService.editTrainingSession(id, trainingSessionDto);
-        SuccessResponse successResponse = new SuccessResponse(HttpStatus.OK, "Training session has been deleted", LocalDateTime.now());
-        return new ResponseEntity<>(successResponse, HttpStatus.OK);
-    }
+//    @PutMapping("/{id}")
+//    ResponseEntity<SuccessResponse> editDiary(@PathVariable Long id,
+//                                              @RequestBody @Validated TrainingSessionDto trainingSessionDto) {
+//        trainingSessionService.editTrainingSession(id, trainingSessionDto);
+//        SuccessResponse successResponse = new SuccessResponse(HttpStatus.OK, "Training session has been deleted", LocalDateTime.now());
+//        return new ResponseEntity<>(successResponse, HttpStatus.OK);
+//    }
 
     @DeleteMapping("/{id}")
     ResponseEntity<SuccessResponse> deleteDiary(@PathVariable Long id) {
@@ -44,6 +44,7 @@ public class TrainingSessionController {
         List<TrainingSessionResponseDto> gymDiaries = trainingSessionService.getAllTrainingSessionsForLoggedUser();
         return new ResponseEntity<>(gymDiaries, HttpStatus.OK);
     }
+
 
     @GetMapping("/{id}")
     ResponseEntity<TrainingSessionResponseDto> getTrainingSessionById(@PathVariable Long id) {

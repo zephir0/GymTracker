@@ -1,4 +1,6 @@
 package com.gymtracker.user.dto;
 
-public record UserLoginDto(String login, String password) {
+import org.springframework.lang.NonNull;
+
+public record UserLoginDto(@NonNull String login, @NonNull String password) {
 };

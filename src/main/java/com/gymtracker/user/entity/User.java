@@ -1,10 +1,11 @@
 package com.gymtracker.user.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.gymtracker.exercise.Exercise;
-import com.gymtracker.training_session.TrainingSession;
 import com.gymtracker.ticket.Ticket;
+import com.gymtracker.training_routine.TrainingRoutine;
+import com.gymtracker.training_session.TrainingSession;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -54,7 +55,12 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<TrainingSession> trainingSessions;
+
     @OneToMany(mappedBy = "user")
+    private List<TrainingRoutine> trainingRoutines;
+
+    @OneToMany(mappedBy = "user")
+    @JsonManagedReference
     private List<Exercise> exerciseList;
 
     @OneToMany(mappedBy = "author")

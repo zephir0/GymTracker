@@ -1,4 +1,8 @@
 package com.gymtracker.exercise;
 
-public record ExerciseDto(String description, MuscleGroup muscleGroup) {
+
+import org.springframework.lang.NonNull;
+
+
+public record ExerciseDto(Long id, @NonNull String description, @NonNull MuscleGroup muscleGroup) {
 }

@@ -1,11 +1,10 @@
 package com.gymtracker.training_session.exception;
 
+import com.gymtracker.utils.ApiException;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Gym diary doesn't exist in database")
-public class TrainingSessionNotFoundException extends RuntimeException{
+public class TrainingSessionNotFoundException extends ApiException {
     public TrainingSessionNotFoundException(String message) {
-        super(message);
+        super(HttpStatus.NOT_FOUND, message);
     }
 }

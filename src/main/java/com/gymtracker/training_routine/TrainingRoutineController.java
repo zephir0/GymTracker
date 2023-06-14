@@ -8,6 +8,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,5 +28,11 @@ public class TrainingRoutineController {
     ResponseEntity<TrainingRoutine> getTrainingRoutine(@PathVariable Long id) {
         TrainingRoutine trainingRoutine = trainingRoutineService.getTrainingRoutine(id);
         return new ResponseEntity<>(trainingRoutine, HttpStatus.OK);
+    }
+
+    @GetMapping("/user")
+    ResponseEntity<List<TrainingRoutine>> getAllTrainingRoutinesForUser() {
+        List<TrainingRoutine> allTrainingRoutinesForUser = trainingRoutineService.getAllTrainingRoutinesForUser();
+        return new ResponseEntity<>(allTrainingRoutinesForUser, HttpStatus.OK);
     }
 }

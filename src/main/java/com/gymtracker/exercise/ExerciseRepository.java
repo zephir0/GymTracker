@@ -14,10 +14,11 @@ import java.util.Optional;
 @Repository
 @EnableCaching
 public interface ExerciseRepository extends JpaRepository<Exercise, Long> {
-    @Query("SELECT e FROM Exercise e WHERE e.description = :description AND (e.user.id = :userId OR (e.user.id IS NULL AND e.adminCreated = :isAdminCreated))")
+    @Query("SELECT DISTINCT e FROM Exercise e LEFT JOIN FETCH e.user WHERE e.description = :description AND (e.user.id = :userId OR (e.user.id IS NULL AND e.adminCreated = :isAdminCreated))")
     Optional<Exercise> findByDescriptionAndUserIdOrAdminCreated(@Param("description") String description,
                                                                 @Param("userId") Long userId,
                                                                 @Param("isAdminCreated") boolean isAdminCreated);
+
 
 
     @Cacheable(cacheNames = "exercises")

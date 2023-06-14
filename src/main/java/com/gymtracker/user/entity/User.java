@@ -57,6 +57,7 @@ public class User {
     private List<TrainingSession> trainingSessions;
 
     @OneToMany(mappedBy = "user")
+    @JsonManagedReference
     private List<TrainingRoutine> trainingRoutines;
 
     @OneToMany(mappedBy = "user")

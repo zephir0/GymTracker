@@ -5,6 +5,8 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,9 +18,9 @@ public interface TrainingSessionRepository extends JpaRepository<TrainingSession
     @Cacheable(cacheNames = "training_sessions")
     List<TrainingSession> findAllByUser(User user);
 
-    @Override
     @Cacheable(cacheNames = "training_sessions")
-    Optional<TrainingSession> findById(Long aLong);
+    @Query("SELECT ts FROM TrainingSession ts LEFT JOIN FETCH ts.trainingRoutine tr LEFT JOIN FETCH tr.user LEFT JOIN FETCH ts.trainingLogs tl LEFT JOIN FETCH tl.exercise WHERE ts.id = :id")
+    Optional<TrainingSession> findById(@Param("id") Long id);
 
     @Override
     @CacheEvict(cacheNames = "training_sessions", allEntries = true)

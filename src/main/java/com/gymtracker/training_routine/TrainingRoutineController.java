@@ -21,7 +21,7 @@ public class TrainingRoutineController {
     ResponseEntity<SuccessResponse> createTrainingRoutine(@RequestBody @Validated TrainingRoutineDto trainingRoutineDto) {
         trainingRoutineService.createTrainingRoutine(trainingRoutineDto);
         SuccessResponse successResponse = new SuccessResponse(HttpStatus.CREATED, "New training routine has been created.", LocalDateTime.now());
-        return new ResponseEntity<>(successResponse, HttpStatus.OK);
+        return new ResponseEntity<>(successResponse, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")

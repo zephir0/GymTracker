@@ -1,8 +1,12 @@
 package com.gymtracker.training_session;
 
-import java.time.LocalDateTime;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
-public record TrainingSessionResponseDto(Long id, LocalDateTime trainingDate,
+import java.time.LocalDate;
+
+public record TrainingSessionResponseDto(Long id, String routineName,
+                                         @JsonFormat(pattern = "dd-MM-yyyy")
+                                         LocalDate trainingDate,
                                          Integer totalWeight) {
 
 }

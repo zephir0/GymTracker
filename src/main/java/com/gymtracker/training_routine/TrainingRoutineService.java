@@ -2,7 +2,6 @@ package com.gymtracker.training_routine;
 
 import com.gymtracker.exercise.Exercise;
 import com.gymtracker.exercise.ExerciseDto;
-import com.gymtracker.exercise.ExerciseMapper;
 import com.gymtracker.exercise.ExerciseRepository;
 import com.gymtracker.user.UserService;
 import com.gymtracker.user.entity.User;
@@ -17,7 +16,6 @@ import java.util.List;
 @AllArgsConstructor
 public class TrainingRoutineService {
     private final TrainingRoutineRepository trainingRoutineRepository;
-    private final ExerciseMapper exerciseMapper;
     private final UserService userService;
     private final TrainingRoutineMapper trainingRoutineMapper;
     private final ExerciseRepository exerciseRepository;
@@ -45,11 +43,11 @@ public class TrainingRoutineService {
     }
 
     private Exercise createAndSaveExercise(ExerciseDto exerciseDto, User user) {
-        return exerciseRepository.findByDescriptionAndUserIdOrAdminCreated(
-                        exerciseDto.description(), user.getId(), true)
+        return exerciseRepository.findByExerciseNameAndUserIdOrAdminCreated(
+                        exerciseDto.name(), user.getId(), true)
                 .orElseGet(() -> {
                     Exercise exercise = new Exercise();
-                    exercise.setDescription(exerciseDto.description());
+                    exercise.setName(exerciseDto.name());
                     exercise.setMuscleGroup(exerciseDto.muscleGroup());
                     exercise.setAdminCreated(user.getUserRole().equals(UserRoles.ADMIN));
                     exercise.setUser(user);

@@ -44,7 +44,7 @@ public class ExerciseServiceTest {
         exercise.setUser(user);
         user.setId(1L);
         user.setUserRole(UserRoles.ADMIN);
-        exerciseDto = new ExerciseDto("description", MuscleGroup.BICEPS);
+        exerciseDto = new ExerciseDto("name", MuscleGroup.BICEPS);
     }
 
     @Test

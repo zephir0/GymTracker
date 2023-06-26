@@ -14,10 +14,10 @@ import java.util.Optional;
 @Repository
 @EnableCaching
 public interface ExerciseRepository extends JpaRepository<Exercise, Long> {
-    @Query("SELECT DISTINCT e FROM Exercise e LEFT JOIN FETCH e.user WHERE e.description = :description AND (e.user.id = :userId OR (e.user.id IS NULL AND e.adminCreated = :isAdminCreated))")
-    Optional<Exercise> findByDescriptionAndUserIdOrAdminCreated(@Param("description") String description,
-                                                                @Param("userId") Long userId,
-                                                                @Param("isAdminCreated") boolean isAdminCreated);
+    @Query("SELECT DISTINCT e FROM Exercise e LEFT JOIN FETCH e.user WHERE e.name = :name AND (e.user.id = :userId OR (e.user.id IS NULL AND e.adminCreated = :isAdminCreated))")
+    Optional<Exercise> findByExerciseNameAndUserIdOrAdminCreated(@Param("name") String name,
+                                                                 @Param("userId") Long userId,
+                                                                 @Param("isAdminCreated") boolean isAdminCreated);
 
 
 
@@ -27,8 +27,8 @@ public interface ExerciseRepository extends JpaRepository<Exercise, Long> {
 
     Exercise getReferenceById(Long exerciseId);
 
-    Optional<Exercise> findByDescriptionAndAdminCreated(String description,
-                                                        boolean isAdminCreated);
+    Optional<Exercise> findByNameAndAdminCreated(String name,
+                                                 boolean isAdminCreated);
 
 
     @Override

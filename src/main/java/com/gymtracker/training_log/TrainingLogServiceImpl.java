@@ -4,6 +4,7 @@ import com.gymtracker.exercise.ExerciseService;
 import com.gymtracker.exercise.exception.ExerciseNotFoundException;
 import com.gymtracker.training_log.exception.TrainingLogNotFoundException;
 import com.gymtracker.training_session.TrainingSession;
+import com.gymtracker.training_session.TrainingSessionDto;
 import com.gymtracker.training_session.TrainingSessionRetriever;
 import com.gymtracker.training_session.exception.TrainingSessionNotFoundException;
 import com.gymtracker.training_session.exception.UnauthorizedTrainingSessionAccessException;
@@ -23,18 +24,8 @@ public class TrainingLogServiceImpl implements TrainingLogService {
     private final ExerciseService exerciseService;
 
     @Override
-    public void createTrainingLog(TrainingLogDto trainingLogDto) {
-
-        if (!exerciseService.existById(trainingLogDto.exerciseId())) {
-            throw new ExerciseNotFoundException("Exercise with that id doesn't exist");
-        }
-
-        trainingSessionRetriever.getTrainingSessionById(trainingLogDto.trainingSessionId()).filter(this::checkAuthorization).ifPresentOrElse(session -> {
-            TrainingLog trainingLog = trainingLogMapper.toEntity(trainingLogDto);
-            trainingLogRepository.save(trainingLog);
-        }, () -> {
-            throw new TrainingSessionNotFoundException("Training session not found");
-        });
+    public void createTrainingLogs(TrainingSessionDto trainingSessionDto, Long createdSessionId) {
+        trainingSessionDto.trainingLogDtoList().stream().map((trainingLog) -> trainingLogMapper.toEntity(trainingLog, createdSessionId)).forEach(trainingLogRepository::save);
     }
 
     @Override
@@ -64,10 +55,14 @@ public class TrainingLogServiceImpl implements TrainingLogService {
     public List<TrainingLogResponseDto> getTrainingLogsForTrainingSession(Long id) {
         TrainingSession trainingSession = trainingSessionRetriever.getTrainingSessionById(id).filter(this::checkAuthorization).orElseThrow(() -> new TrainingSessionNotFoundException("Training session not found"));
 
-        List<TrainingLogResponseDto> trainingLogResponseDtoList = trainingSession.getTrainingLogs().stream().map(trainingLogMapper::toDto).collect(Collectors.toList());
+        List<TrainingLogResponseDto> trainingLogResponseDtoList = trainingSession.getTrainingLogs().stream().map(map -> {
+            String name = map.getExercise().getName();
+            return trainingLogMapper.toDto(map, name);
+        }).collect(Collectors.toList());
 
         if (trainingLogResponseDtoList.isEmpty()) {
             throw new TrainingLogNotFoundException("There is no logs in that training session");
+
         } else return trainingLogResponseDtoList;
 
     }

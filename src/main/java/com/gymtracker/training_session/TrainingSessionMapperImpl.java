@@ -1,16 +1,20 @@
 package com.gymtracker.training_session;
 
+import com.gymtracker.training_routine.TrainingRoutine;
+import com.gymtracker.training_routine.TrainingRoutineRepository;
 import com.gymtracker.training_session.progress_tracker.ProgressTrackerService;
 import com.gymtracker.user.entity.User;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 @AllArgsConstructor
 @Component
 public class TrainingSessionMapperImpl implements TrainingSessionMapper {
     private final ProgressTrackerService progressTrackerService;
+    private final TrainingRoutineRepository trainingRoutineRepository;
 
     @Override
     public TrainingSession toEntity(TrainingSessionDto trainingSessionDto,
@@ -21,7 +25,11 @@ public class TrainingSessionMapperImpl implements TrainingSessionMapper {
         Optional.ofNullable(user)
                 .ifPresent(u -> updateTrainingSessionFromUser(u, trainingSession));
 
-        trainingSession.setTrainingDate(java.time.LocalDateTime.now());
+        TrainingRoutine trainingRoutine = trainingRoutineRepository.getReferenceById(trainingSessionDto.trainingRoutineId());
+
+        trainingSession.setTrainingRoutine(trainingRoutine);
+
+        trainingSession.setTrainingDate(LocalDate.now());
 
         return trainingSession;
     }
@@ -34,9 +42,8 @@ public class TrainingSessionMapperImpl implements TrainingSessionMapper {
 
         Integer totalWeight = progressTrackerService.calculateTotalWeightForSession(trainingSession.getId());
         return new TrainingSessionResponseDto(
-                trainingSession.getId(),
+                trainingSession.getId(), trainingSession.getTrainingRoutine().getRoutineName(),
                 trainingSession.getTrainingDate(),
-
                 totalWeight
         );
     }

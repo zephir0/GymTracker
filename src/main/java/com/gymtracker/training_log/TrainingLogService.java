@@ -1,10 +1,11 @@
 package com.gymtracker.training_log;
 
+import com.gymtracker.training_session.TrainingSessionDto;
+
 import java.util.List;
 
 public interface TrainingLogService {
-    void createTrainingLog(TrainingLogDto trainingLogDto);
-
+    public void createTrainingLogs(TrainingSessionDto trainingSessionDto, Long createdSessionId);
     void deleteTrainingLog(Long id);
 
     void editTrainingLog(Long id,

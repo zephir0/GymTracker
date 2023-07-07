@@ -24,20 +24,20 @@ public class ProgressTrackerServiceImpl implements ProgressTrackerService {
     }
 
     @Override
-    public Integer calculateTotalWeightForSession(Long trainingSessionId) {
+    public Long calculateTotalWeightForSession(Long trainingSessionId) {
         List<TrainingLog> trainingLogList = trainingLogService.getAllByTrainingSessionId(trainingSessionId);
         return calculateWeight(trainingLogList);
     }
 
     @Override
-    public Integer calculateExerciseWeightForSession(Long exerciseId,
+    public Long calculateExerciseWeightForSession(Long exerciseId,
                                                      Long trainingSessionId) {
         List<TrainingLog> trainingLogList = trainingLogService.getAllByExerciseIdAndTrainingSessionId(exerciseId, trainingSessionId);
         return calculateWeight(trainingLogList);
     }
 
-    private Integer calculateWeight(List<TrainingLog> trainingLogs) {
-        return trainingLogs.stream().mapToInt(TrainingLog::getWeight).sum();
+    private Long calculateWeight(List<TrainingLog> trainingLogs) {
+        return (long) trainingLogs.stream().mapToInt(TrainingLog::getWeight).sum();
     }
 
     private List<TrainingLog> sortByWeightAndReps(List<TrainingLog> trainingLogs) {

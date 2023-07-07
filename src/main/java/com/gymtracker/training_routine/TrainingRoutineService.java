@@ -24,9 +24,9 @@ public class TrainingRoutineService {
         return trainingRoutineRepository.findByTrainingRoutineId(id).orElseThrow(() -> new TrainingRoutineNotFoundException("Training routine doesn't exist."));
     }
 
-    public List<TrainingRoutine> getAllTrainingRoutinesForUser() {
+    public List<TrainingRoutine> getTrainingRoutines(boolean isArchived) {
         User loggedUser = userService.getLoggedUser();
-        return trainingRoutineRepository.findAllByUserId(loggedUser.getId());
+        return trainingRoutineRepository.findAllByUserIdAndArchived(loggedUser.getId(), isArchived);
     }
 
     @Transactional
@@ -42,7 +42,23 @@ public class TrainingRoutineService {
         trainingRoutineRepository.save(routine);
     }
 
-    private Exercise createAndSaveExercise(ExerciseDto exerciseDto, User user) {
+    @Transactional
+    public void archiveTrainingRoutine(Long routineId) {
+        User loggedUser = userService.getLoggedUser();
+
+        trainingRoutineRepository.findById(routineId).ifPresentOrElse(trainingRoutine -> {
+            if (trainingRoutine.getUser().getId().equals(loggedUser.getId())) {
+                trainingRoutine.setArchived(true);
+                trainingRoutineRepository.save(trainingRoutine);
+            } else
+                throw new NotAuthorizedAccessTrainingRoutineException("You are not authorized to delete that routine.");
+        }, () -> {
+            throw new TrainingRoutineNotFoundException("Training routine not found.");
+        });
+    }
+
+    private Exercise createAndSaveExercise(ExerciseDto exerciseDto,
+                                           User user) {
         return exerciseRepository.findByExerciseNameAndUserIdOrAdminCreated(
                         exerciseDto.name(), user.getId(), true)
                 .orElseGet(() -> {
@@ -55,7 +71,8 @@ public class TrainingRoutineService {
                 });
     }
 
-    private boolean routineHasNotExercise(TrainingRoutine routine, Exercise exercise) {
+    private boolean routineHasNotExercise(TrainingRoutine routine,
+                                          Exercise exercise) {
         return routine.getExerciseList().stream()
                 .noneMatch(e -> e.getId().equals(exercise.getId()));
     }

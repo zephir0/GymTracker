@@ -30,6 +30,10 @@ public class TrainingRoutine {
     @JsonBackReference
     private User user;
 
+    @Column(name = "is_archived")
+    @NotNull
+    private boolean isArchived;
+
     @ManyToMany()
     @JoinTable(
             name = "training_routine_exercise",

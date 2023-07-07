@@ -40,7 +40,21 @@ public class TrainingSessionMapperImpl implements TrainingSessionMapper {
             return null;
         }
 
-        Integer totalWeight = progressTrackerService.calculateTotalWeightForSession(trainingSession.getId());
+        Long totalWeight = progressTrackerService.calculateTotalWeightForSession(trainingSession.getId());
+        return new TrainingSessionResponseDto(
+                trainingSession.getId(), trainingSession.getTrainingRoutine().getRoutineName(),
+                trainingSession.getTrainingDate(),
+                totalWeight
+        );
+    }
+
+    @Override
+    public TrainingSessionResponseDto toDto(TrainingSession trainingSession,
+                                            Long totalWeight) {
+        if (trainingSession == null) {
+            return null;
+        }
+
         return new TrainingSessionResponseDto(
                 trainingSession.getId(), trainingSession.getTrainingRoutine().getRoutineName(),
                 trainingSession.getTrainingDate(),

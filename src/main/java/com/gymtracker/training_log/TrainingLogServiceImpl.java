@@ -79,6 +79,7 @@ public class TrainingLogServiceImpl implements TrainingLogService {
         return trainingSession.getTrainingLogs();
     }
 
+
     @Override
     public List<TrainingLog> getAllByExerciseIdAndTrainingSessionId(Long exerciseId,
                                                                     Long trainingSessionId) {

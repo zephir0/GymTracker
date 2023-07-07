@@ -7,6 +7,6 @@ import java.time.LocalDate;
 public record TrainingSessionResponseDto(Long id, String routineName,
                                          @JsonFormat(pattern = "dd-MM-yyyy")
                                          LocalDate trainingDate,
-                                         Integer totalWeight) {
+                                         Long totalWeight) {
 
 }

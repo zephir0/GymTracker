@@ -1,7 +1,7 @@
 package com.gymtracker.training_session;
 
 import com.gymtracker.training_log.TrainingLogService;
-import com.gymtracker.training_routine.UnAuthorizedAccessTrainingRoutineException;
+import com.gymtracker.training_routine.NotAuthorizedAccessTrainingRoutineException;
 import com.gymtracker.training_session.exception.TrainingSessionNotFoundException;
 import com.gymtracker.training_session.exception.UnauthorizedTrainingSessionAccessException;
 import com.gymtracker.user.UserService;
@@ -32,7 +32,7 @@ public class TrainingSessionServiceImpl implements TrainingSessionService {
             Long createdSessionId = trainingSessionRepository.save(trainingSession).getId();
             trainingLogService.createTrainingLogs(trainingSessionDto, createdSessionId);
         } else
-            throw new UnAuthorizedAccessTrainingRoutineException("You are not authorized to use that training routine");
+            throw new NotAuthorizedAccessTrainingRoutineException("You are not authorized to use that training routine");
     }
 
 
@@ -67,8 +67,13 @@ public class TrainingSessionServiceImpl implements TrainingSessionService {
     @Override
     public List<TrainingSessionResponseDto> getAllTrainingSessionsForLoggedUser() {
         User loggedUser = userService.getLoggedUser();
-        return trainingSessionRepository.findAllByUser(loggedUser).stream().map(trainingSessionMapper::toDto
-        ).collect(Collectors.toList());
+        return trainingSessionRepository.findTrainingSessionsAndTotalWeightsByUser(loggedUser).stream()
+                .map(sessions -> {
+                    TrainingSession trainingSession = (TrainingSession) sessions[0];
+                    Long totalWeight = (Long) sessions[1];
+                    return trainingSessionMapper.toDto(trainingSession, totalWeight);
+                })
+                .collect(Collectors.toList());
     }
 
 

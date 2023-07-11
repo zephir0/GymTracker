@@ -15,9 +15,8 @@ import java.util.Optional;
 @Repository
 @EnableCaching
 public interface TrainingSessionRepository extends JpaRepository<TrainingSession, Long> {
-    @Cacheable(cacheNames = "training_sessions")
-    @Query("SELECT ts FROM TrainingSession ts LEFT JOIN FETCH ts.trainingRoutine LEFT JOIN FETCH ts.user WHERE ts.user = :user")
-    List<TrainingSession> findAllByUser(@Param("user") User user);
+    @Query("SELECT COUNT(ts) FROM TrainingSession ts WHERE ts.user = :user")
+    Long countByUser(@Param("user") User user);
 
     @Cacheable(cacheNames = "training_sessions")
     @Query("SELECT ts FROM TrainingSession ts LEFT JOIN FETCH ts.trainingRoutine tr LEFT JOIN FETCH tr.user LEFT JOIN FETCH ts.trainingLogs tl LEFT JOIN FETCH tl.exercise WHERE ts.id = :id")

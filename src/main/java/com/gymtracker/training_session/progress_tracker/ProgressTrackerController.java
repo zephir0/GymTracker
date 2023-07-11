@@ -33,6 +33,12 @@ public class ProgressTrackerController {
         return new ResponseEntity<>(successResponse, HttpStatus.OK);
     }
 
+    @GetMapping("/training-sessions/workouts-count")
+    public ResponseEntity<Long> countWorkouts() {
+        Long workoutCount = progressTrackerService.countTrainingSessions();
+        return new ResponseEntity<>(workoutCount, HttpStatus.OK);
+    }
+
 
     @GetMapping("/training-sessions/{trainingSessionId}/exercises/{exerciseId}/weight")
     public ResponseEntity<SuccessResponse> calculateExerciseWeightForSession(@PathVariable Long exerciseId,

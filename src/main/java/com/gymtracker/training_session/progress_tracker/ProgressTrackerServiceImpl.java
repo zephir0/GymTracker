@@ -4,6 +4,9 @@ import com.gymtracker.training_log.TrainingLog;
 import com.gymtracker.training_log.TrainingLogMapper;
 import com.gymtracker.training_log.TrainingLogResponseDto;
 import com.gymtracker.training_log.TrainingLogService;
+import com.gymtracker.training_session.TrainingSessionRepository;
+import com.gymtracker.user.UserService;
+import com.gymtracker.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +18,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ProgressTrackerServiceImpl implements ProgressTrackerService {
     private final TrainingLogService trainingLogService;
+    private final TrainingSessionRepository trainingSessionRepository;
     private final TrainingLogMapper trainingLogMapper;
+    private final UserService userService;
 
     @Override
     public List<TrainingLogResponseDto> sortByMaxWeightAndRepsForExercise(Long exerciseId) {
@@ -31,9 +36,15 @@ public class ProgressTrackerServiceImpl implements ProgressTrackerService {
 
     @Override
     public Long calculateExerciseWeightForSession(Long exerciseId,
-                                                     Long trainingSessionId) {
+                                                  Long trainingSessionId) {
         List<TrainingLog> trainingLogList = trainingLogService.getAllByExerciseIdAndTrainingSessionId(exerciseId, trainingSessionId);
         return calculateWeight(trainingLogList);
+    }
+
+    @Override
+    public Long countTrainingSessions() {
+        User loggedUser = userService.getLoggedUser();
+        return trainingSessionRepository.countByUser(loggedUser);
     }
 
     private Long calculateWeight(List<TrainingLog> trainingLogs) {

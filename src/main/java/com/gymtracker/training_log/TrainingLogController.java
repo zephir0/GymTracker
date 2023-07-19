@@ -18,14 +18,6 @@ import java.util.List;
 public class TrainingLogController {
     private final TrainingLogService trainingLogService;
 
-    @PostMapping
-    public ResponseEntity<SuccessResponse> createTrainingLog(@RequestBody @Validated TrainingLogDto trainingLogDto) {
-        trainingLogService.createTrainingLog(trainingLogDto);
-        SuccessResponse successResponse = new SuccessResponse(HttpStatus.CREATED, "Training log has been created successfully", LocalDateTime.now());
-        return new ResponseEntity<>(successResponse, HttpStatus.CREATED);
-    }
-
-
     @PutMapping("/{id}")
     public ResponseEntity<SuccessResponse> editTrainingLog(@PathVariable Long id,
                                                            @RequestBody @Validated TrainingLogDto trainingLogDto) {

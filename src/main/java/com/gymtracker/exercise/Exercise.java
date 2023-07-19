@@ -28,9 +28,9 @@ public class Exercise {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "description")
+    @Column(name = "name")
     @NotEmpty(message = "exercise.description.notEmpty")
-    private String description;
+    private String name;
 
     @Enumerated(EnumType.STRING)
     @NotNull(message = "exercise.muscleGroup.notNull")

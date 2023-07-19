@@ -1,7 +1,7 @@
 package com.gymtracker.training_routine;
 
 import com.gymtracker.exercise.Exercise;
-import com.gymtracker.exercise.ExerciseMapper;
+import com.gymtracker.exercise.ExerciseDto;
 import com.gymtracker.exercise.ExerciseRepository;
 import com.gymtracker.user.UserService;
 import com.gymtracker.user.entity.User;
@@ -10,15 +10,24 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 @Service
 @AllArgsConstructor
 public class TrainingRoutineService {
     private final TrainingRoutineRepository trainingRoutineRepository;
-    private final ExerciseMapper exerciseMapper;
     private final UserService userService;
     private final TrainingRoutineMapper trainingRoutineMapper;
     private final ExerciseRepository exerciseRepository;
+
+    public TrainingRoutine getTrainingRoutine(Long id) {
+        return trainingRoutineRepository.findByTrainingRoutineId(id).orElseThrow(() -> new TrainingRoutineNotFoundException("Training routine doesn't exist."));
+    }
+
+    public List<TrainingRoutine> getTrainingRoutines(boolean isArchived) {
+        User loggedUser = userService.getLoggedUser();
+        return trainingRoutineRepository.findAllByUserIdAndArchived(loggedUser.getId(), isArchived);
+    }
 
     @Transactional
     public void createTrainingRoutine(TrainingRoutineDto trainingRoutineDto) {
@@ -26,47 +35,46 @@ public class TrainingRoutineService {
         TrainingRoutine routine = trainingRoutineMapper.toEntity(trainingRoutineDto, loggedUser);
 
         trainingRoutineDto.exerciseList().stream()
-                .map(exerciseDto -> exerciseMapper.toEntity(exerciseDto, loggedUser))
-                .forEach(exercise -> addExerciseToRoutine(exercise, routine, loggedUser));
+                .map(exerciseDto -> createAndSaveExercise(exerciseDto, loggedUser))
+                .filter(exercise -> routineHasNotExercise(routine, exercise))
+                .forEach(routine::addExercise);
 
         trainingRoutineRepository.save(routine);
     }
 
-    private void addExerciseToRoutine(Exercise exercise,
-                                      TrainingRoutine routine,
-                                      User user) {
-        Exercise savedExercise = findOrCreateExercise(exercise, user);
-        if (routineHasNotExercise(routine, savedExercise)) {
-            routine.addExercise(savedExercise);
-        }
+    @Transactional
+    public void archiveTrainingRoutine(Long routineId) {
+        User loggedUser = userService.getLoggedUser();
+
+        trainingRoutineRepository.findById(routineId).ifPresentOrElse(trainingRoutine -> {
+            if (trainingRoutine.getUser().getId().equals(loggedUser.getId())) {
+                trainingRoutine.setArchived(true);
+                trainingRoutineRepository.save(trainingRoutine);
+            } else
+                throw new NotAuthorizedAccessTrainingRoutineException("You are not authorized to delete that routine.");
+        }, () -> {
+            throw new TrainingRoutineNotFoundException("Training routine not found.");
+        });
     }
 
-    private Exercise findOrCreateExercise(Exercise exercise,
-                                          User user) {
-        return exerciseRepository.findByDescriptionAndUserIdOrAdminCreated(
-                        exercise.getDescription(), user.getId(), true)
-                .orElseGet(() -> createAndSaveExercise(exercise, user));
-    }
-
-    private Exercise createAndSaveExercise(Exercise exercise,
+    private Exercise createAndSaveExercise(ExerciseDto exerciseDto,
                                            User user) {
-        Exercise newExercise = new Exercise();
-        newExercise.setDescription(exercise.getDescription());
-        newExercise.setMuscleGroup(exercise.getMuscleGroup());
-        newExercise.setAdminCreated(user.getUserRole().equals(UserRoles.ADMIN));
-        newExercise.setUser(user);
-        return exerciseRepository.save(newExercise);
+        return exerciseRepository.findByExerciseNameAndUserIdOrAdminCreated(
+                        exerciseDto.name(), user.getId(), true)
+                .orElseGet(() -> {
+                    Exercise exercise = new Exercise();
+                    exercise.setName(exerciseDto.name());
+                    exercise.setMuscleGroup(exerciseDto.muscleGroup());
+                    exercise.setAdminCreated(user.getUserRole().equals(UserRoles.ADMIN));
+                    exercise.setUser(user);
+                    return exerciseRepository.save(exercise);
+                });
     }
 
     private boolean routineHasNotExercise(TrainingRoutine routine,
                                           Exercise exercise) {
         return routine.getExerciseList().stream()
                 .noneMatch(e -> e.getId().equals(exercise.getId()));
-    }
-
-
-    public TrainingRoutine getTrainingRoutine(Long id) {
-        return trainingRoutineRepository.findByTrainingRoutineId(id).orElseThrow(() -> new TrainingRoutineNotFoundException("Training routine doesn't exist."));
     }
 
 }

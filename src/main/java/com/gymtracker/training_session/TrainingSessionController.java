@@ -46,6 +46,8 @@ public class TrainingSessionController {
     }
 
 
+
+
     @GetMapping("/{id}")
     ResponseEntity<TrainingSessionResponseDto> getTrainingSessionById(@PathVariable Long id) {
         TrainingSessionResponseDto trainingSessionById = trainingSessionService.getTrainingSessionDtoById(id);

@@ -41,7 +41,7 @@ public class TrainingLog {
     @NotNull(message = "trainingLog.exerciseId.notNull")
     private Exercise exercise;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "training_session_id")
     @NotNull(message = "trainingLog.trainingSessionId.notNull")
     private TrainingSession trainingSession;

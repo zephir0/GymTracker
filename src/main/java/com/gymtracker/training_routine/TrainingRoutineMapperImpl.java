@@ -15,6 +15,7 @@ public class TrainingRoutineMapperImpl implements TrainingRoutineMapper {
                                     User user) {
         TrainingRoutine trainingRoutine = new TrainingRoutine();
         trainingRoutine.setUser(user);
+        trainingRoutine.setArchived(false);
         trainingRoutine.setRoutineName(trainingRoutineDto.routineName());
         return trainingRoutine;
     }

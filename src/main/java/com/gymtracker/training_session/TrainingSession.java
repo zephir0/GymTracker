@@ -10,7 +10,7 @@ import lombok.Setter;
 import org.springframework.cache.annotation.Cacheable;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -27,13 +27,13 @@ public class TrainingSession {
 
     @Column(name = "training_date")
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDateTime trainingDate;
+    private LocalDate trainingDate;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "trainingSession")
+    @OneToMany(mappedBy = "trainingSession", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TrainingLog> trainingLogs;
 
     @ManyToOne

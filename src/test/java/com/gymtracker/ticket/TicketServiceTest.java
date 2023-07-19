@@ -48,8 +48,8 @@ public class TicketServiceTest {
         ticket = new Ticket();
         ticket.setId(ticketId);
         ticket.setAuthor(user);
-        ticketDto = new TicketDto("subject", "description");
-        ticketResponseDto = new TicketResponseDto("subject", "description", LocalDateTime.now());
+        ticketDto = new TicketDto("subject", "name");
+        ticketResponseDto = new TicketResponseDto("subject", "name", LocalDateTime.now());
 
         when(userService.getLoggedUser()).thenReturn(user);
     }

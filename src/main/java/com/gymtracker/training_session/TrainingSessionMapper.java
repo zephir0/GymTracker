@@ -9,5 +9,9 @@ public interface TrainingSessionMapper {
 
     TrainingSessionResponseDto toDto(TrainingSession trainingSession);
 
+    TrainingSessionResponseDto toDto(TrainingSession trainingSession,
+                                     Long totalWeight);
+
+
 }
 

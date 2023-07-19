@@ -25,9 +25,9 @@ public class ExerciseServiceImpl implements ExerciseService {
         User loggedUser = userService.getLoggedUser();
         Exercise exercise = exerciseMapper.toEntity(exerciseDto, loggedUser);
 
-        exerciseRepository.findByDescriptionAndAdminCreated(exercise.getDescription(), true)
+        exerciseRepository.findByNameAndAdminCreated(exercise.getName(), true)
                 .ifPresent(existingExercise -> {
-                    throw new ExerciseAlreadyCreatedByAdminException(String.format("Exercise with name '%s' was already created by admin.", existingExercise.getDescription()));
+                    throw new ExerciseAlreadyCreatedByAdminException(String.format("Exercise with name '%s' was already created by admin.", existingExercise.getName()));
                 });
 
         exerciseRepository.save(exercise);
@@ -37,7 +37,7 @@ public class ExerciseServiceImpl implements ExerciseService {
     public void editExercise(Long id,
                              ExerciseDto exerciseDto) {
         exerciseRepository.findById(id).filter(this::checkAuthorization).ifPresentOrElse(exercise -> {
-            exercise.setDescription(exerciseDto.description());
+            exercise.setName(exerciseDto.name());
             exercise.setMuscleGroup(exerciseDto.muscleGroup());
             exerciseRepository.save(exercise);
         }, () -> {

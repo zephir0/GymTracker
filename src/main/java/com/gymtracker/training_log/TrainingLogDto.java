@@ -9,5 +9,5 @@ public record TrainingLogDto(@NonNull Integer reps,
                              Integer weight,
                              String personalNotes,
                              @NotNull Long exerciseId,
-                             @NotNull Long trainingSessionId) {
+                              Long trainingSessionId) {
 }

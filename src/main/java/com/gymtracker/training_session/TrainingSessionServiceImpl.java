@@ -1,5 +1,7 @@
 package com.gymtracker.training_session;
 
+import com.gymtracker.training_log.TrainingLogService;
+import com.gymtracker.training_routine.NotAuthorizedAccessTrainingRoutineException;
 import com.gymtracker.training_session.exception.TrainingSessionNotFoundException;
 import com.gymtracker.training_session.exception.UnauthorizedTrainingSessionAccessException;
 import com.gymtracker.user.UserService;
@@ -8,6 +10,7 @@ import com.gymtracker.user.entity.UserRoles;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -19,24 +22,19 @@ public class TrainingSessionServiceImpl implements TrainingSessionService {
     private final TrainingSessionRepository trainingSessionRepository;
     private final TrainingSessionMapper trainingSessionMapper;
     private final UserService userService;
+    private final TrainingLogService trainingLogService;
 
     @Override
+    @Transactional
     public void createTrainingSession(TrainingSessionDto trainingSessionDto) {
-
         TrainingSession trainingSession = trainingSessionMapper.toEntity(trainingSessionDto, userService.getLoggedUser());
-        trainingSessionRepository.save(trainingSession);
+        if (trainingSession.getUser().getId().equals(trainingSession.getTrainingRoutine().getUser().getId())) {
+            Long createdSessionId = trainingSessionRepository.save(trainingSession).getId();
+            trainingLogService.createTrainingLogs(trainingSessionDto, createdSessionId);
+        } else
+            throw new NotAuthorizedAccessTrainingRoutineException("You are not authorized to use that training routine");
     }
 
-//    @Override
-//    public void editTrainingSession(Long id,
-//                                    TrainingSessionDto trainingSessionDto) {
-//        trainingSessionRepository.findById(id).map(this::isTrainingSessionCreatorOrAdmin).ifPresentOrElse(trainingSession -> {
-//            trainingSession.setTrainingName(trainingSessionDto.trainingName());
-//            trainingSessionRepository.save(trainingSession);
-//        }, () -> {
-//            throw new TrainingSessionNotFoundException("Training Session doesn't exist in database");
-//        });
-//    }
 
     @Override
     public void deleteTrainingSession(Long id) {
@@ -69,8 +67,13 @@ public class TrainingSessionServiceImpl implements TrainingSessionService {
     @Override
     public List<TrainingSessionResponseDto> getAllTrainingSessionsForLoggedUser() {
         User loggedUser = userService.getLoggedUser();
-        return trainingSessionRepository.findAllByUser(loggedUser).stream().map(trainingSessionMapper::toDto
-        ).collect(Collectors.toList());
+        return trainingSessionRepository.findTrainingSessionsAndTotalWeightsByUser(loggedUser).stream()
+                .map(sessions -> {
+                    TrainingSession trainingSession = (TrainingSession) sessions[0];
+                    Long totalWeight = (Long) sessions[1];
+                    return trainingSessionMapper.toDto(trainingSession, totalWeight);
+                })
+                .collect(Collectors.toList());
     }
 
 

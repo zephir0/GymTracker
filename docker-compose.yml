@@ -1,0 +1,29 @@
+version: '3'
+services:
+  db:
+    image: mysql:5.7
+    container_name: mysql_gym_tracker_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: xx33xx12
+      MYSQL_DATABASE: gym_tracker
+    volumes:
+      - ./data:/var/lib/mysql
+    ports:
+      - "3310:3306"
+
+  app:
+    build: .
+    image: springboot
+    container_name: gym_tracker_app
+    depends_on:
+      - db1
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://35.234.173.92:3306:3306/gym_tracker
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: Xx33xx12
+      APP_JWT_SECRET: secretKey
+      APP_JWT_EXPIRATION_IN_MS: 36000000
+    volumes:
+      - .:/app
+      - ~/.m2:/root/.m2

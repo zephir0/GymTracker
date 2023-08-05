@@ -16,8 +16,7 @@ import java.util.Optional;
 @EnableCaching
 public interface TrainingLogRepository extends JpaRepository<TrainingLog, Long> {
     @Cacheable(cacheNames = "training_logs")
-    @Modifying
-    @Query("SELECT t FROM TrainingLog t JOIN FETCH t.exercise e JOIN FETCH e.user JOIN FETCH t.trainingSession ts JOIN FETCH ts.user WHERE t.exercise.id = :exerciseId")
+    @Query("SELECT t FROM TrainingLog t JOIN FETCH t.exercise e JOIN FETCH e.user u1 JOIN FETCH t.trainingSession ts JOIN FETCH ts.user u2 WHERE t.exercise.id = :exerciseId")
     List<TrainingLog> findAllByExerciseId(@Param("exerciseId") Long exerciseId);
 
 

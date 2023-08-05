@@ -3,6 +3,10 @@ package com.gymtracker.training_routine;
 import com.gymtracker.exercise.Exercise;
 import com.gymtracker.exercise.ExerciseDto;
 import com.gymtracker.exercise.ExerciseRepository;
+import com.gymtracker.training_log.TrainingLog;
+import com.gymtracker.training_log.TrainingLogMapper;
+import com.gymtracker.training_log.TrainingLogResponseDto;
+import com.gymtracker.training_log.TrainingLogService;
 import com.gymtracker.user.UserService;
 import com.gymtracker.user.entity.User;
 import com.gymtracker.user.entity.UserRoles;
@@ -10,7 +14,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @AllArgsConstructor
@@ -19,6 +25,8 @@ public class TrainingRoutineService {
     private final UserService userService;
     private final TrainingRoutineMapper trainingRoutineMapper;
     private final ExerciseRepository exerciseRepository;
+    private final TrainingLogService trainingLogService;
+    private final TrainingLogMapper trainingLogMapper;
 
     public TrainingRoutine getTrainingRoutine(Long id) {
         return trainingRoutineRepository.findByTrainingRoutineId(id).orElseThrow(() -> new TrainingRoutineNotFoundException("Training routine doesn't exist."));
@@ -56,6 +64,26 @@ public class TrainingRoutineService {
             throw new TrainingRoutineNotFoundException("Training routine not found.");
         });
     }
+
+
+    public Map<Long, TrainingLogResponseDto> getPreviousTrainingEntries(Long routineId) {
+        TrainingRoutine trainingRoutine = trainingRoutineRepository.findById(routineId)
+                .orElseThrow(() -> new TrainingRoutineNotFoundException("Training routine not found"));
+
+        Map<Long, TrainingLogResponseDto> previousTrainingEntriesMap = new HashMap<>();
+
+        trainingRoutine.getExerciseList().stream()
+                .filter(exercise -> !trainingLogService.getAllByExerciseId(exercise.getId()).isEmpty())
+                .forEach(exercise -> {
+                    List<TrainingLog> trainingLogs = trainingLogService.getAllByExerciseId(exercise.getId());
+                    TrainingLog latestTrainingLog = trainingLogs.get(trainingLogs.size() - 1);
+                    TrainingLogResponseDto trainingLogResponseDto = trainingLogMapper.toDto(latestTrainingLog);
+                    previousTrainingEntriesMap.put(exercise.getId(), trainingLogResponseDto);
+                });
+
+        return previousTrainingEntriesMap;
+    }
+
 
     private Exercise createAndSaveExercise(ExerciseDto exerciseDto,
                                            User user) {

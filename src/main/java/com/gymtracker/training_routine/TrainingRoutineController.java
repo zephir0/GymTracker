@@ -1,6 +1,8 @@
 package com.gymtracker.training_routine;
 
 import com.gymtracker.response.SuccessResponse;
+import com.gymtracker.training_log.TrainingLog;
+import com.gymtracker.training_log.TrainingLogResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -30,6 +33,12 @@ public class TrainingRoutineController {
         trainingRoutineService.archiveTrainingRoutine(id);
         SuccessResponse successResponse = new SuccessResponse(HttpStatus.OK, "Training routine has been archived.", LocalDateTime.now());
         return new ResponseEntity<>(successResponse, HttpStatus.OK);
+    }
+
+    @GetMapping("/previous-logs/{routineId}")
+    ResponseEntity<Map<Long, TrainingLogResponseDto>> getPreviousTrainingLogsForTrainingRoutine(@PathVariable("routineId") Long routineId) {
+        Map<Long, TrainingLogResponseDto> previousTrainingEntries = trainingRoutineService.getPreviousTrainingEntries(routineId);
+        return new ResponseEntity<>(previousTrainingEntries, HttpStatus.OK);
     }
 
 

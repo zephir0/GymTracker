@@ -1,5 +1,6 @@
 package com.gymtracker.training_log;
 
+import com.gymtracker.exercise.Exercise;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -13,4 +14,5 @@ public interface TrainingLogMapper {
 
     TrainingLogResponseDto toDto(TrainingLog trainingLog,
                                  String name);
+
 }

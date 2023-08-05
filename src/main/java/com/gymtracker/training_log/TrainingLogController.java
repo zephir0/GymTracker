@@ -26,9 +26,9 @@ public class TrainingLogController {
         return new ResponseEntity<>(successResponse, HttpStatus.OK);
     }
 
-    @GetMapping("/gym-diary/{id}")
-    public ResponseEntity<List<TrainingLogResponseDto>> getTrainingLogsForTrainingSession(@PathVariable Long id) {
-        List<TrainingLogResponseDto> trainingLogsForTrainingSession = trainingLogService.getTrainingLogsForTrainingSession(id);
+    @GetMapping("/gym-diary/{trainingSessionId}")
+    public ResponseEntity<List<TrainingLogResponseDto>> getTrainingLogsForTrainingSession(@PathVariable("trainingSessionId") Long trainingSessionId) {
+        List<TrainingLogResponseDto> trainingLogsForTrainingSession = trainingLogService.getTrainingLogsForTrainingSession(trainingSessionId);
         return new ResponseEntity<>(trainingLogsForTrainingSession, HttpStatus.OK);
     }
 

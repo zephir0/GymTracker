@@ -35,8 +35,8 @@ public class TrainingLogController {
     @DeleteMapping("/{id}")
     public ResponseEntity<SuccessResponse> deleteTrainingLogById(@PathVariable Long id) {
         trainingLogService.deleteTrainingLog(id);
+
         SuccessResponse successResponse = new SuccessResponse(HttpStatus.OK, "Training log id: " + id + " has been deleted", LocalDateTime.now());
         return new ResponseEntity<>(successResponse, HttpStatus.OK);
     }
-
 }

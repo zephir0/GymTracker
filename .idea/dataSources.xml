@@ -8,12 +8,5 @@
       <jdbc-url>jdbc:mysql://localhost:3306/gym_tracker</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="google_cloud_database" uuid="45514b86-98ac-4eca-bff4-761278be6747">
-      <driver-ref>mysql.8</driver-ref>
-      <synchronize>true</synchronize>
-      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://35.234.173.92:3306/gym_tracker</jdbc-url>
-      <working-dir>$ProjectFileDir$</working-dir>
-    </data-source>
   </component>
 </project>

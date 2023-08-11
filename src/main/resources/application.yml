@@ -1,10 +1,7 @@
 app:
   jwt:
-    secret: secretKey
-    expiration-in-ms: 36000000
-
-
-
+    secret: ${JWT_SECRET}
+    expiration-in-ms: ${JWT_EXPIRATION}
 
 spring:
   main:
@@ -13,9 +10,9 @@ spring:
     type: simple
     cache-names: users, exercises, tickets, messages, training_sessions, training_logs
   datasource:
-    url: jdbc:mysql://35.234.173.92:3306/gym_tracker
-    username: root
-    password: Xx33xx12
+    url: jdbc:mysql://gym-tracker-db.mysql.database.azure.com:3306/gym_tracker
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
   jpa:
     properties:
       hibernate:
@@ -33,4 +30,3 @@ server:
   error:
     include-stacktrace: never
   port: 20183
-

@@ -5,13 +5,13 @@ FROM openjdk:17-jdk-slim
 RUN mkdir /app
 
 # Skopiuj plik JAR z lokalnego katalogu (./app/target) do kontenera (/app)
-COPY ./app/target/GymTracker-0.0.1-SNAPSHOT.jar /app/GymTracker-0.0.1-SNAPSHOT.jar
+COPY ./target/GymTracker-0.0.1-SNAPSHOT.jar /app/GymTracker-0.0.1-SNAPSHOT.jar
 
 # Ustaw katalog roboczy na /app
 WORKDIR /app
 
 # Określ, że kontener nasłuchuje na porcie 8080 (taki, jak używa domyślnie Spring Boot)
-EXPOSE 8080
+EXPOSE 20183
 
 # Uruchom aplikację Spring Boot, gdy kontener zostanie uruchomiony
 CMD ["java", "-jar", "GymTracker-0.0.1-SNAPSHOT.jar"]

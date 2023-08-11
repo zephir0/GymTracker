@@ -1,32 +1,17 @@
-# Stage 1: Build the application
-FROM maven:3.8.4-openjdk-17 as builder
+# Użyj oficjalnego obrazu OpenJDK 17 jako obrazu bazowego
+FROM openjdk:17-jdk-slim
 
-# Set the working directory
+# Utwórz katalog /app w kontenerze
+RUN mkdir /app
+
+# Skopiuj plik JAR z lokalnego katalogu (./app/target) do kontenera (/app)
+COPY ./app/target/GymTracker-0.0.1-SNAPSHOT.jar /app/GymTracker-0.0.1-SNAPSHOT.jar
+
+# Ustaw katalog roboczy na /app
 WORKDIR /app
 
-# Copy the Maven project files
-COPY pom.xml .
-
-# Download and cache the dependencies
-RUN mvn dependency:go-offline
-
-# Copy the source code
-COPY src/ ./src/
-
-# Build the application
-RUN mvn package
-
-# Stage 2: Create the final runtime image
-FROM alpine:latest
-
-# Set the working directory
-WORKDIR /app
-
-# Copy the built JAR file from the builder stage
-COPY --from=builder /app/target/GymTracker-0.0.1-SNAPSHOT.jar ./gym-tracker-backend.jar
-
-# Set the entrypoint
-ENTRYPOINT ["java", "-jar", "gym-tracker-backend.jar"]
-
-# Expose the necessary port
+# Określ, że kontener nasłuchuje na porcie 8080 (taki, jak używa domyślnie Spring Boot)
 EXPOSE 8080
+
+# Uruchom aplikację Spring Boot, gdy kontener zostanie uruchomiony
+CMD ["java", "-jar", "GymTracker-0.0.1-SNAPSHOT.jar"]

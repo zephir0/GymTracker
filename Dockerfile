@@ -26,7 +26,7 @@ WORKDIR /app
 COPY --from=builder /app/target/GymTracker-0.0.1-SNAPSHOT.jar ./gym-tracker-backend.jar
 
 # Set the entrypoint
-ENTRYPOINT ["java", "-jar", "my-maven-docker-project.jar"]
+ENTRYPOINT ["java", "-jar", "gym-tracker-backend.jar"]
 
 # Expose the necessary port
 EXPOSE 8080

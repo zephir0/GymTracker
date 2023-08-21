@@ -10,7 +10,7 @@ spring:
     type: simple
     cache-names: users, exercises, tickets, messages, training_sessions, training_logs
   datasource:
-    url: jdbc:mysql://gym-tracker-db.mysql.database.azure.com:3306/gym_tracker
+    url: ${DB_TEST_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
   jpa:

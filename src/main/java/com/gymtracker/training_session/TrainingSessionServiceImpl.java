@@ -47,10 +47,7 @@ public class TrainingSessionServiceImpl implements TrainingSessionService {
 
     @Override
     public TrainingSessionResponseDto getTrainingSessionDtoById(Long id) {
-        return trainingSessionRepository.findById(id)
-                .map(this::isTrainingSessionCreatorOrAdmin)
-                .map(trainingSessionMapper::toDto)
-                .orElseThrow(() -> new TrainingSessionNotFoundException("Training session not found"));
+        return trainingSessionRepository.findById(id).map(this::isTrainingSessionCreatorOrAdmin).map(trainingSessionMapper::toDto).orElseThrow(() -> new TrainingSessionNotFoundException("Training session not found"));
     }
 
     @Override
@@ -63,17 +60,19 @@ public class TrainingSessionServiceImpl implements TrainingSessionService {
         return userService.getLoggedUser().getUserRole().equals(UserRoles.ADMIN) || trainingSession.getUser().getId().equals(userService.getLoggedUser().getId());
     }
 
-
     @Override
     public List<TrainingSessionResponseDto> getAllTrainingSessionsForLoggedUser() {
         User loggedUser = userService.getLoggedUser();
-        return trainingSessionRepository.findTrainingSessionsAndTotalWeightsByUser(loggedUser).stream()
-                .map(sessions -> {
-                    TrainingSession trainingSession = (TrainingSession) sessions[0];
-                    Long totalWeight = (Long) sessions[1];
-                    return trainingSessionMapper.toDto(trainingSession, totalWeight);
-                })
-                .collect(Collectors.toList());
+
+        List<TrainingSession> trainingSessions = trainingSessionRepository.findTrainingSessionsByUser(loggedUser);
+
+        List<Object[]> sessionAndTotalWeights = trainingSessionRepository.findTotalWeightsForTrainingSessions(trainingSessions);
+
+        return sessionAndTotalWeights.stream().map(data -> {
+            TrainingSession trainingSession = (TrainingSession) data[0];
+            Long totalWeight = (Long) data[1];
+            return trainingSessionMapper.toDto(trainingSession, totalWeight);
+        }).collect(Collectors.toList());
     }
 
 

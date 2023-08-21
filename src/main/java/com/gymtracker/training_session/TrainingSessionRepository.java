@@ -22,16 +22,11 @@ public interface TrainingSessionRepository extends JpaRepository<TrainingSession
     @Query("SELECT ts FROM TrainingSession ts LEFT JOIN FETCH ts.trainingRoutine tr LEFT JOIN FETCH tr.user LEFT JOIN FETCH ts.trainingLogs tl LEFT JOIN FETCH tl.exercise WHERE ts.id = :id")
     Optional<TrainingSession> findById(@Param("id") Long id);
 
-    @Query("SELECT ts, tl.id, SUM(tl.weight) as totalWeight FROM TrainingSession ts " +
-            "JOIN FETCH ts.trainingLogs tl " +
-            "JOIN FETCH ts.trainingRoutine tr " +
-            "JOIN FETCH tr.user " +
-            "JOIN FETCH tl.exercise " +
-            "WHERE ts.user = :user " +
-            "GROUP BY ts, tl.id, tl.weight")
-    List<Object[]> findTrainingSessionsAndTotalWeightsByUser(User user);
+    @Query("SELECT DISTINCT ts FROM TrainingSession ts " + "JOIN FETCH ts.trainingRoutine tr " + "JOIN FETCH tr.user " + "WHERE ts.user = :user")
+    List<TrainingSession> findTrainingSessionsByUser(User user);
 
-
+    @Query("SELECT ts, SUM(tl.weight) as totalWeight FROM TrainingLog tl " + "JOIN tl.trainingSession ts " + "WHERE ts IN :trainingSessions " + "GROUP BY ts")
+    List<Object[]> findTotalWeightsForTrainingSessions(@Param("trainingSessions") List<TrainingSession> trainingSessions);
 
     @Override
     @CacheEvict(cacheNames = "training_sessions", allEntries = true)

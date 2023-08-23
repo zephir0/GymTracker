@@ -1,5 +1,7 @@
 package com.gymtracker.chat;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,23 +18,21 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/tickets/{ticketId}/messages")
+@Api(tags = "Chat Messages")
 public class MessageController {
     private final MessageService messageService;
 
+    @ApiOperation("Send a chat message")
     @MessageMapping("/messages/{ticketId}")
     public void send(@DestinationVariable("ticketId") Long ticketId,
                      @Payload MessageDto messageDto) {
         messageService.send(ticketId, messageDto);
     }
 
+    @ApiOperation("Get list of chat messages")
     @GetMapping()
     public ResponseEntity<List<MessageResponseDto>> getMessageList(@PathVariable Long ticketId) {
         List<MessageResponseDto> messageList = messageService.getMessageList(ticketId);
         return new ResponseEntity<>(messageList, HttpStatus.OK);
     }
-
 }
-
-
-
-

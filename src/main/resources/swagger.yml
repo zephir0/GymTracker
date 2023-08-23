@@ -1,0 +1,1248 @@
+---
+swagger: '2.0'
+info:
+  description: Documentation for GymTracker API
+  version: '1.0'
+  title: GymTracker API Documentation
+host: localhost:20183
+basePath: "/"
+tags:
+  - name: Authorization API
+    description: Authorization Controller
+  - name: Chat Messages
+    description: Message Controller
+  - name: Exercise API
+    description: Exercise Controller
+  - name: Progress Tracker API
+    description: Progress Tracker Controller
+  - name: Ticket API
+    description: Ticket Controller
+  - name: Training Log API
+    description: Training Log Controller
+  - name: Training Routine API
+    description: Training Routine Controller
+  - name: Training Session API
+    description: Training Session Controller
+  - name: User API
+    description: User Controller
+paths:
+  "/api/auth/login":
+    post:
+      tags:
+        - Authorization API
+      summary: Login to the application
+      operationId: loginUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - "*/*"
+      parameters:
+        - in: body
+          name: userLoginDto
+          description: userLoginDto
+          required: true
+          schema:
+            "$ref": "#/definitions/UserLoginDto"
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  "/api/auth/register":
+    post:
+      tags:
+        - Authorization API
+      summary: Register a new user
+      operationId: registerUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - "*/*"
+      parameters:
+        - in: body
+          name: userRegisterDto
+          description: userRegisterDto
+          required: true
+          schema:
+            "$ref": "#/definitions/UserRegisterDto"
+      responses:
+        '200':
+          description: OK
+          schema:
+            "$ref": "#/definitions/SuccessResponse"
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  "/api/exercises":
+    get:
+      tags:
+        - Exercise API
+      summary: Get list of all exercises
+      operationId: getExercisesUsingGET
+      produces:
+        - "*/*"
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              "$ref": "#/definitions/ExerciseResponseDto"
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    post:
+      tags:
+        - Exercise API
+      summary: Create a new exercise
+      operationId: createExerciseUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - "*/*"
+      parameters:
+        - in: body
+          name: exerciseDto
+          description: exerciseDto
+          required: true
+          schema:
+            "$ref": "#/definitions/ExerciseDto"
+      responses:
+        '200':
+          description: OK
+          schema:
+            "$ref": "#/definitions/SuccessResponse"
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  "/api/exercises/{id}":
+    put:
+      tags:
+        - Exercise API
+      summary: Edit an existing exercise
+      operationId: editExerciseUsingPUT
+      consumes:
+        - application/json
+      produces:
+        - "*/*"
+      parameters:
+        - in: body
+          name: exerciseDto
+          description: exerciseDto
+          required: true
+          schema:
+            "$ref": "#/definitions/ExerciseDto"
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          schema:
+            "$ref": "#/definitions/SuccessResponse"
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    delete:
+      tags:
+        - Exercise API
+      summary: Delete an exercise
+      operationId: deleteExerciseUsingDELETE
+      produces:
+        - "*/*"
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          schema:
+            "$ref": "#/definitions/SuccessResponse"
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+  "/api/progress-tracker/exercises/{exerciseId}/sort-by-weight-and-rep":
+    get:
+      tags:
+        - Progress Tracker API
+      summary: Sort training logs by max weight and reps for a specific exercise
+      operationId: sortByMaxWeightAndRepsForExerciseUsingGET
+      produces:
+        - "*/*"
+      parameters:
+        - name: exerciseId
+          in: path
+          description: exerciseId
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          schema:
+            "$ref": "#/definitions/SuccessResponse"
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  "/api/progress-tracker/training-sessions/workouts-count":
+    get:
+      tags:
+        - Progress Tracker API
+      summary: Count the number of recorded workouts (training sessions)
+      operationId: countWorkoutsUsingGET
+      produces:
+        - "*/*"
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: integer
+            format: int64
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  "/api/progress-tracker/training-sessions/{trainingSessionId}/exercises/{exerciseId}/weight":
+    get:
+      tags:
+        - Progress Tracker API
+      summary: Calculate total weight lifted for a specific exercise within a training
+        session
+      operationId: calculateExerciseWeightForSessionUsingGET
+      produces:
+        - "*/*"
+      parameters:
+        - name: exerciseId
+          in: path
+          description: exerciseId
+          required: true
+          type: integer
+          format: int64
+        - name: trainingSessionId
+          in: path
+          description: trainingSessionId
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          schema:
+            "$ref": "#/definitions/SuccessResponse"
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  "/api/progress-tracker/training-sessions/{trainingSessionId}/weight":
+    get:
+      tags:
+        - Progress Tracker API
+      summary: Calculate total weight lifted for a specific training session
+      operationId: calculateTotalWeightForSessionUsingGET
+      produces:
+        - "*/*"
+      parameters:
+        - name: trainingSessionId
+          in: path
+          description: trainingSessionId
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          schema:
+            "$ref": "#/definitions/SuccessResponse"
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  "/api/tickets":
+    get:
+      tags:
+        - Ticket API
+      summary: Get all tickets
+      operationId: getAllTicketsUsingGET
+      produces:
+        - "*/*"
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              "$ref": "#/definitions/TicketResponseDto"
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    post:
+      tags:
+        - Ticket API
+      summary: Create a new ticket
+      operationId: createTicketUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - "*/*"
+      parameters:
+        - in: body
+          name: ticketDto
+          description: ticketDto
+          required: true
+          schema:
+            "$ref": "#/definitions/TicketDto"
+      responses:
+        '200':
+          description: OK
+          schema:
+            "$ref": "#/definitions/SuccessResponse"
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  "/api/tickets/{id}":
+    put:
+      tags:
+        - Ticket API
+      summary: Edit a ticket
+      operationId: editTicketUsingPUT
+      consumes:
+        - application/json
+      produces:
+        - "*/*"
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: integer
+          format: int64
+        - in: body
+          name: ticketDto
+          description: ticketDto
+          required: true
+          schema:
+            "$ref": "#/definitions/TicketDto"
+      responses:
+        '200':
+          description: OK
+          schema:
+            "$ref": "#/definitions/SuccessResponse"
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    delete:
+      tags:
+        - Ticket API
+      summary: Delete a ticket
+      operationId: deleteTicketUsingDELETE
+      produces:
+        - "*/*"
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          schema:
+            "$ref": "#/definitions/SuccessResponse"
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+  "/api/tickets/{ticketId}/messages":
+    get:
+      tags:
+        - Chat Messages
+      summary: Get list of chat messages
+      operationId: getMessageListUsingGET
+      produces:
+        - "*/*"
+      parameters:
+        - name: ticketId
+          in: path
+          description: ticketId
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              "$ref": "#/definitions/MessageResponseDto"
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  "/api/training-logs/gym-diary/{trainingSessionId}":
+    get:
+      tags:
+        - Training Log API
+      summary: Get training logs for a training session
+      operationId: getTrainingLogsForTrainingSessionUsingGET
+      produces:
+        - "*/*"
+      parameters:
+        - name: trainingSessionId
+          in: path
+          description: trainingSessionId
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              "$ref": "#/definitions/TrainingLogResponseDto"
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  "/api/training-logs/{id}":
+    put:
+      tags:
+        - Training Log API
+      summary: Edit a training log
+      operationId: editTrainingLogUsingPUT
+      consumes:
+        - application/json
+      produces:
+        - "*/*"
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: integer
+          format: int64
+        - in: body
+          name: trainingLogDto
+          description: trainingLogDto
+          required: true
+          schema:
+            "$ref": "#/definitions/TrainingLogDto"
+      responses:
+        '200':
+          description: OK
+          schema:
+            "$ref": "#/definitions/SuccessResponse"
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    delete:
+      tags:
+        - Training Log API
+      summary: Delete a training log
+      operationId: deleteTrainingLogByIdUsingDELETE
+      produces:
+        - "*/*"
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          schema:
+            "$ref": "#/definitions/SuccessResponse"
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+  "/api/training-routines":
+    post:
+      tags:
+        - Training Routine API
+      summary: Create a new training routine
+      operationId: createTrainingRoutineUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - "*/*"
+      parameters:
+        - in: body
+          name: trainingRoutineDto
+          description: trainingRoutineDto
+          required: true
+          schema:
+            "$ref": "#/definitions/TrainingRoutineDto"
+      responses:
+        '200':
+          description: OK
+          schema:
+            "$ref": "#/definitions/SuccessResponse"
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  "/api/training-routines/previous-logs/{routineId}":
+    get:
+      tags:
+        - Training Routine API
+      summary: Get previous training logs for a training routine
+      operationId: getPreviousTrainingLogsForTrainingRoutineUsingGET
+      produces:
+        - "*/*"
+      parameters:
+        - name: routineId
+          in: path
+          description: routineId
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            additionalProperties:
+              "$ref": "#/definitions/TrainingLogResponseDto"
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  "/api/training-routines/user":
+    get:
+      tags:
+        - Training Routine API
+      summary: Get all training routines for a user
+      operationId: getTrainingRoutinesForUserUsingGET
+      produces:
+        - "*/*"
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              "$ref": "#/definitions/TrainingRoutine"
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  "/api/training-routines/user/archived":
+    get:
+      tags:
+        - Training Routine API
+      summary: Get archived training routines for a user
+      operationId: getArchivedTrainingRoutinesForUserUsingGET
+      produces:
+        - "*/*"
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              "$ref": "#/definitions/TrainingRoutine"
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  "/api/training-routines/{id}":
+    get:
+      tags:
+        - Training Routine API
+      summary: Get details of a training routine
+      operationId: getTrainingRoutineUsingGET
+      produces:
+        - "*/*"
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          schema:
+            "$ref": "#/definitions/TrainingRoutine"
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    put:
+      tags:
+        - Training Routine API
+      summary: Archive a training routine
+      operationId: deleteTrainingRoutineUsingPUT
+      consumes:
+        - application/json
+      produces:
+        - "*/*"
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          schema:
+            "$ref": "#/definitions/SuccessResponse"
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  "/api/training-sessions":
+    post:
+      tags:
+        - Training Session API
+      summary: Create a new training session
+      operationId: createTrainingSessionUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - "*/*"
+      parameters:
+        - in: body
+          name: trainingSessionDto
+          description: trainingSessionDto
+          required: true
+          schema:
+            "$ref": "#/definitions/TrainingSessionDto"
+      responses:
+        '200':
+          description: OK
+          schema:
+            "$ref": "#/definitions/SuccessResponse"
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  "/api/training-sessions/user":
+    get:
+      tags:
+        - Training Session API
+      summary: Get all training sessions for logged user
+      operationId: getAllTrainingSessionsForLoggedUserUsingGET
+      produces:
+        - "*/*"
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              "$ref": "#/definitions/TrainingSessionResponseDto"
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  "/api/training-sessions/{id}":
+    get:
+      tags:
+        - Training Session API
+      summary: Get a training session by ID
+      operationId: getTrainingSessionByIdUsingGET
+      produces:
+        - "*/*"
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          schema:
+            "$ref": "#/definitions/TrainingSessionResponseDto"
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    delete:
+      tags:
+        - Training Session API
+      summary: Delete a training session by ID
+      operationId: deleteTrainingSessionUsingDELETE
+      produces:
+        - "*/*"
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          schema:
+            "$ref": "#/definitions/SuccessResponse"
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+  "/api/users/logged-user":
+    get:
+      tags:
+        - User API
+      summary: Get details of the logged-in user
+      operationId: getLoggedUserInfoUsingGET
+      produces:
+        - "*/*"
+      responses:
+        '200':
+          description: OK
+          schema:
+            "$ref": "#/definitions/UserResponseDto"
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+definitions:
+  Exercise:
+    type: object
+    required:
+      - muscleGroup
+    properties:
+      adminCreated:
+        type: boolean
+      id:
+        type: integer
+        format: int64
+      muscleGroup:
+        type: string
+        enum:
+          - ABS
+          - BACK
+          - BICEPS
+          - CALVES
+          - CHEST
+          - GLUTES
+          - LEGS
+          - SHOULDERS
+          - TRICEPS
+      name:
+        type: string
+      user:
+        "$ref": "#/definitions/User"
+    title: Exercise
+  ExerciseDto:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      muscleGroup:
+        type: string
+        enum:
+          - ABS
+          - BACK
+          - BICEPS
+          - CALVES
+          - CHEST
+          - GLUTES
+          - LEGS
+          - SHOULDERS
+          - TRICEPS
+      name:
+        type: string
+    title: ExerciseDto
+  ExerciseResponseDto:
+    type: object
+    properties:
+      muscleGroup:
+        type: string
+        enum:
+          - ABS
+          - BACK
+          - BICEPS
+          - CALVES
+          - CHEST
+          - GLUTES
+          - LEGS
+          - SHOULDERS
+          - TRICEPS
+      name:
+        type: string
+    title: ExerciseResponseDto
+  Message:
+    type: object
+    properties:
+      creationDate:
+        type: string
+        format: date-time
+      id:
+        type: integer
+        format: int64
+      message:
+        type: string
+      receiverId:
+        type: integer
+        format: int64
+      senderId:
+        type: integer
+        format: int64
+    title: Message
+  MessageResponseDto:
+    type: object
+    properties:
+      creationDate:
+        type: string
+        format: date-time
+      message:
+        type: string
+      receiverId:
+        type: integer
+        format: int64
+      senderId:
+        type: integer
+        format: int64
+    title: MessageResponseDto
+  SuccessResponse:
+    type: object
+    properties:
+      body:
+        type: object
+      httpStatus:
+        type: string
+        enum:
+          - ACCEPTED
+          - ALREADY_REPORTED
+          - BAD_GATEWAY
+          - BAD_REQUEST
+          - BANDWIDTH_LIMIT_EXCEEDED
+          - CHECKPOINT
+          - CONFLICT
+          - CONTINUE
+          - CREATED
+          - DESTINATION_LOCKED
+          - EXPECTATION_FAILED
+          - FAILED_DEPENDENCY
+          - FORBIDDEN
+          - FOUND
+          - GATEWAY_TIMEOUT
+          - GONE
+          - HTTP_VERSION_NOT_SUPPORTED
+          - IM_USED
+          - INSUFFICIENT_SPACE_ON_RESOURCE
+          - INSUFFICIENT_STORAGE
+          - INTERNAL_SERVER_ERROR
+          - I_AM_A_TEAPOT
+          - LENGTH_REQUIRED
+          - LOCKED
+          - LOOP_DETECTED
+          - METHOD_FAILURE
+          - METHOD_NOT_ALLOWED
+          - MOVED_PERMANENTLY
+          - MOVED_TEMPORARILY
+          - MULTIPLE_CHOICES
+          - MULTI_STATUS
+          - NETWORK_AUTHENTICATION_REQUIRED
+          - NON_AUTHORITATIVE_INFORMATION
+          - NOT_ACCEPTABLE
+          - NOT_EXTENDED
+          - NOT_FOUND
+          - NOT_IMPLEMENTED
+          - NOT_MODIFIED
+          - NO_CONTENT
+          - OK
+          - PARTIAL_CONTENT
+          - PAYLOAD_TOO_LARGE
+          - PAYMENT_REQUIRED
+          - PERMANENT_REDIRECT
+          - PRECONDITION_FAILED
+          - PRECONDITION_REQUIRED
+          - PROCESSING
+          - PROXY_AUTHENTICATION_REQUIRED
+          - REQUESTED_RANGE_NOT_SATISFIABLE
+          - REQUEST_ENTITY_TOO_LARGE
+          - REQUEST_HEADER_FIELDS_TOO_LARGE
+          - REQUEST_TIMEOUT
+          - REQUEST_URI_TOO_LONG
+          - RESET_CONTENT
+          - SEE_OTHER
+          - SERVICE_UNAVAILABLE
+          - SWITCHING_PROTOCOLS
+          - TEMPORARY_REDIRECT
+          - TOO_EARLY
+          - TOO_MANY_REQUESTS
+          - UNAUTHORIZED
+          - UNAVAILABLE_FOR_LEGAL_REASONS
+          - UNPROCESSABLE_ENTITY
+          - UNSUPPORTED_MEDIA_TYPE
+          - UPGRADE_REQUIRED
+          - URI_TOO_LONG
+          - USE_PROXY
+          - VARIANT_ALSO_NEGOTIATES
+      timeStamp:
+        type: string
+        format: date-time
+    title: SuccessResponse
+  Ticket:
+    type: object
+    required:
+      - author
+      - creationDate
+      - description
+      - subject
+    properties:
+      author:
+        "$ref": "#/definitions/User"
+      creationDate:
+        type: string
+        format: date-time
+      description:
+        type: string
+      id:
+        type: integer
+        format: int64
+      messageList:
+        type: array
+        items:
+          "$ref": "#/definitions/Message"
+      subject:
+        type: string
+    title: Ticket
+  TicketDto:
+    type: object
+    required:
+      - description
+      - subject
+    properties:
+      description:
+        type: string
+      subject:
+        type: string
+    title: TicketDto
+  TicketResponseDto:
+    type: object
+    properties:
+      creationDate:
+        type: string
+        format: date-time
+      description:
+        type: string
+      subject:
+        type: string
+    title: TicketResponseDto
+  TrainingLog:
+    type: object
+    required:
+      - exercise
+      - reps
+      - trainingSession
+      - weight
+    properties:
+      exercise:
+        "$ref": "#/definitions/Exercise"
+      id:
+        type: integer
+        format: int64
+      personalNotes:
+        type: string
+      reps:
+        type: integer
+        format: int32
+      trainingSession:
+        "$ref": "#/definitions/TrainingSession"
+      weight:
+        type: integer
+        format: int32
+    title: TrainingLog
+  TrainingLogDto:
+    type: object
+    required:
+      - exerciseId
+    properties:
+      exerciseId:
+        type: integer
+        format: int64
+      personalNotes:
+        type: string
+      reps:
+        type: integer
+        format: int32
+      trainingSessionId:
+        type: integer
+        format: int64
+      weight:
+        type: integer
+        format: int32
+    title: TrainingLogDto
+  TrainingLogResponseDto:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+      personalNotes:
+        type: string
+      reps:
+        type: integer
+        format: int64
+      weight:
+        type: integer
+        format: int64
+    title: TrainingLogResponseDto
+  TrainingRoutine:
+    type: object
+    required:
+      - archived
+      - routineName
+      - user
+    properties:
+      archived:
+        type: boolean
+      exerciseList:
+        type: array
+        items:
+          "$ref": "#/definitions/Exercise"
+      id:
+        type: integer
+        format: int64
+      routineName:
+        type: string
+      user:
+        "$ref": "#/definitions/User"
+    title: TrainingRoutine
+  TrainingRoutineDto:
+    type: object
+    required:
+      - exerciseList
+      - routineName
+    properties:
+      exerciseList:
+        type: array
+        items:
+          "$ref": "#/definitions/ExerciseDto"
+      routineName:
+        type: string
+    title: TrainingRoutineDto
+  TrainingSession:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      trainingDate:
+        type: string
+        format: date
+      trainingLogs:
+        type: array
+        items:
+          "$ref": "#/definitions/TrainingLog"
+      trainingRoutine:
+        "$ref": "#/definitions/TrainingRoutine"
+      user:
+        "$ref": "#/definitions/User"
+    title: TrainingSession
+  TrainingSessionDto:
+    type: object
+    properties:
+      trainingLogDtoList:
+        type: array
+        items:
+          "$ref": "#/definitions/TrainingLogDto"
+      trainingRoutineId:
+        type: integer
+        format: int64
+    title: TrainingSessionDto
+  TrainingSessionResponseDto:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      routineName:
+        type: string
+      totalWeight:
+        type: integer
+        format: int64
+      trainingDate:
+        type: string
+        format: date
+    title: TrainingSessionResponseDto
+  User:
+    type: object
+    required:
+      - emailAddress
+    properties:
+      creationDate:
+        type: string
+        format: date-time
+      emailAddress:
+        type: string
+      exerciseList:
+        type: array
+        items:
+          "$ref": "#/definitions/Exercise"
+      id:
+        type: integer
+        format: int64
+      login:
+        type: string
+      password:
+        type: string
+      ticketList:
+        type: array
+        items:
+          "$ref": "#/definitions/Ticket"
+      trainingRoutines:
+        type: array
+        items:
+          "$ref": "#/definitions/TrainingRoutine"
+      trainingSessions:
+        type: array
+        items:
+          "$ref": "#/definitions/TrainingSession"
+      userRole:
+        type: string
+        enum:
+          - ADMIN
+          - USER
+    title: User
+  UserLoginDto:
+    type: object
+    properties:
+      login:
+        type: string
+      password:
+        type: string
+    title: UserLoginDto
+  UserRegisterDto:
+    type: object
+    required:
+      - emailAddress
+      - login
+      - password
+    properties:
+      emailAddress:
+        type: string
+      login:
+        type: string
+      password:
+        type: string
+    title: UserRegisterDto
+  UserResponseDto:
+    type: object
+    properties:
+      emailAddress:
+        type: string
+      login:
+        type: string
+      userRole:
+        type: string
+        enum:
+          - ADMIN
+          - USER
+    title: UserResponseDto

@@ -3,6 +3,11 @@ app:
     secret: ${JWT_SECRET}
     expiration-in-ms: ${JWT_EXPIRATION}
 
+springfox:
+  documentation:
+    swagger-ui:
+      enabled: true
+
 spring:
   main:
     allow-circular-references: true

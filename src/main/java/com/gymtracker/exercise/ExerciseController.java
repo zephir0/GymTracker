@@ -1,6 +1,8 @@
 package com.gymtracker.exercise;
 
 import com.gymtracker.response.SuccessResponse;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,10 +16,11 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/api/exercises")
+@Api(tags = "Exercise API")
 public class ExerciseController {
     private final ExerciseService exerciseService;
 
-
+    @ApiOperation("Create a new exercise")
     @PostMapping
     public ResponseEntity<SuccessResponse> createExercise(@RequestBody @Validated ExerciseDto exerciseDto) {
         exerciseService.createExercise(exerciseDto);
@@ -25,6 +28,7 @@ public class ExerciseController {
         return new ResponseEntity<>(successResponse, HttpStatus.CREATED);
     }
 
+    @ApiOperation("Edit an existing exercise")
     @PutMapping("/{id}")
     public ResponseEntity<SuccessResponse> editExercise(@PathVariable Long id,
                                                         @RequestBody @Validated ExerciseDto exerciseDto) {
@@ -34,12 +38,14 @@ public class ExerciseController {
         return new ResponseEntity<>(successResponse, HttpStatus.OK);
     }
 
+    @ApiOperation("Get list of all exercises")
     @GetMapping()
     public ResponseEntity<List<ExerciseResponseDto>> getExercises() {
         List<ExerciseResponseDto> allExercises = exerciseService.getAllExercises();
         return new ResponseEntity<>(allExercises, HttpStatus.OK);
     }
 
+    @ApiOperation("Delete an exercise")
     @DeleteMapping("/{id}")
     public ResponseEntity<SuccessResponse> deleteExercise(@PathVariable Long id) {
         exerciseService.deleteExercise(id);

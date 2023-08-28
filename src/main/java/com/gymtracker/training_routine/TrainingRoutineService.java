@@ -29,7 +29,11 @@ public class TrainingRoutineService {
     private final TrainingLogMapper trainingLogMapper;
 
     public TrainingRoutine getTrainingRoutine(Long id) {
-        return trainingRoutineRepository.findByTrainingRoutineId(id).orElseThrow(() -> new TrainingRoutineNotFoundException("Training routine doesn't exist."));
+        return trainingRoutineRepository.findByTrainingRoutineId(id)
+                .map(this::isAuthorized)
+                .orElseThrow(
+                        () -> new TrainingRoutineNotFoundException("Training routine doesn't exist.")
+                );
     }
 
     public List<TrainingRoutine> getTrainingRoutines(boolean isArchived) {
@@ -40,7 +44,8 @@ public class TrainingRoutineService {
     @Transactional
     public void createTrainingRoutine(TrainingRoutineDto trainingRoutineDto) {
         User loggedUser = userService.getLoggedUser();
-        TrainingRoutine routine = trainingRoutineMapper.toEntity(trainingRoutineDto, loggedUser);
+        TrainingRoutine routine = trainingRoutineMapper
+                .toEntity(trainingRoutineDto, loggedUser);
 
         trainingRoutineDto.exerciseList().stream()
                 .map(exerciseDto -> createAndSaveExercise(exerciseDto, loggedUser))
@@ -52,34 +57,29 @@ public class TrainingRoutineService {
 
     @Transactional
     public void archiveTrainingRoutine(Long routineId) {
-        User loggedUser = userService.getLoggedUser();
-
-        trainingRoutineRepository.findById(routineId).ifPresentOrElse(trainingRoutine -> {
-            if (trainingRoutine.getUser().getId().equals(loggedUser.getId())) {
-                trainingRoutine.setArchived(true);
-                trainingRoutineRepository.save(trainingRoutine);
-            } else
-                throw new NotAuthorizedAccessTrainingRoutineException("You are not authorized to delete that routine.");
-        }, () -> {
-            throw new TrainingRoutineNotFoundException("Training routine not found.");
-        });
+        trainingRoutineRepository.findById(routineId)
+                .map(trainingRoutine -> {
+                    isAuthorized(trainingRoutine);
+                    trainingRoutine.setArchived(true);
+                    return trainingRoutineRepository.save(trainingRoutine);
+                })
+                .orElseThrow(() -> new TrainingRoutineNotFoundException("Training routine not found."));
     }
 
 
     public Map<Long, TrainingLogResponseDto> getPreviousTrainingEntries(Long routineId) {
         TrainingRoutine trainingRoutine = trainingRoutineRepository.findById(routineId)
+                .map(this::isAuthorized)
                 .orElseThrow(() -> new TrainingRoutineNotFoundException("Training routine not found"));
+
 
         Map<Long, TrainingLogResponseDto> previousTrainingEntriesMap = new HashMap<>();
 
         trainingRoutine.getExerciseList().stream()
                 .filter(exercise -> !trainingLogService.getAllByExerciseId(exercise.getId()).isEmpty())
-                .forEach(exercise -> {
-                    List<TrainingLog> trainingLogs = trainingLogService.getAllByExerciseId(exercise.getId());
-                    TrainingLog latestTrainingLog = trainingLogs.get(trainingLogs.size() - 1);
-                    TrainingLogResponseDto trainingLogResponseDto = trainingLogMapper.toDto(latestTrainingLog);
-                    previousTrainingEntriesMap.put(exercise.getId(), trainingLogResponseDto);
-                });
+                .forEach(exercise ->
+                        addLatestTrainingLog(previousTrainingEntriesMap, exercise)
+                );
 
         return previousTrainingEntriesMap;
     }
@@ -87,22 +87,39 @@ public class TrainingRoutineService {
 
     private Exercise createAndSaveExercise(ExerciseDto exerciseDto,
                                            User user) {
-        return exerciseRepository.findByExerciseNameAndUserIdOrAdminCreated(
-                        exerciseDto.name(), user.getId(), true)
-                .orElseGet(() -> {
-                    Exercise exercise = new Exercise();
-                    exercise.setName(exerciseDto.name());
-                    exercise.setMuscleGroup(exerciseDto.muscleGroup());
-                    exercise.setAdminCreated(user.getUserRole().equals(UserRoles.ADMIN));
-                    exercise.setUser(user);
-                    return exerciseRepository.save(exercise);
-                });
+        return exerciseRepository.findByExerciseNameAndUserIdOrAdminCreated(exerciseDto.name(), user.getId(), true).orElseGet(() -> {
+            Exercise exercise = new Exercise();
+            exercise.setName(exerciseDto.name());
+            exercise.setMuscleGroup(exerciseDto.muscleGroup());
+            exercise.setAdminCreated(user.getUserRole().equals(UserRoles.ADMIN));
+            exercise.setUser(user);
+            return exerciseRepository.save(exercise);
+        });
+    }
+
+    private void addLatestTrainingLog(Map<Long, TrainingLogResponseDto> map,
+                                      Exercise exercise) {
+        List<TrainingLog> trainingLogs = trainingLogService.getAllByExerciseId(exercise.getId());
+        TrainingLog latestTrainingLog = trainingLogs.get(trainingLogs.size() - 1);
+        TrainingLogResponseDto trainingLogResponseDto = trainingLogMapper.toDto(latestTrainingLog);
+        map.put(exercise.getId(), trainingLogResponseDto);
     }
 
     private boolean routineHasNotExercise(TrainingRoutine routine,
                                           Exercise exercise) {
-        return routine.getExerciseList().stream()
-                .noneMatch(e -> e.getId().equals(exercise.getId()));
+        return routine.getExerciseList().stream().noneMatch(e -> e.getId().equals(exercise.getId()));
     }
 
+
+    private TrainingRoutine isAuthorized(TrainingRoutine trainingRoutine) {
+        if (checkAuthorization(trainingRoutine)) {
+            return trainingRoutine;
+        } else
+            throw new NotAuthorizedAccessTrainingRoutineException("You are not authorized to access that training routine");
+    }
+
+    private boolean checkAuthorization(TrainingRoutine trainingRoutine) {
+        User loggedUser = userService.getLoggedUser();
+        return loggedUser.getId().equals(trainingRoutine.getUser().getId());
+    }
 }

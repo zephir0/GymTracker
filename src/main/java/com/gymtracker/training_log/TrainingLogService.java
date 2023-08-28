@@ -1,11 +1,14 @@
 package com.gymtracker.training_log;
 
+import com.gymtracker.training_session.TrainingSession;
 import com.gymtracker.training_session.TrainingSessionDto;
 
 import java.util.List;
 
 public interface TrainingLogService {
-    public void createTrainingLogs(TrainingSessionDto trainingSessionDto, Long createdSessionId);
+    void createTrainingLogs(TrainingSessionDto trainingSessionDto,
+                            Long createdSessionId);
+
     void deleteTrainingLog(Long id);
 
     void editTrainingLog(Long id,
@@ -19,4 +22,6 @@ public interface TrainingLogService {
 
     List<TrainingLog> getAllByExerciseIdAndTrainingSessionId(Long exerciseId,
                                                              Long trainingSessionId);
+
+    boolean checkAuthorization(TrainingSession trainingSession);
 }

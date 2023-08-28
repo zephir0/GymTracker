@@ -1,7 +1,6 @@
 package com.gymtracker.training_log;
 
 import com.gymtracker.exercise.ExerciseService;
-import com.gymtracker.exercise.exception.ExerciseNotFoundException;
 import com.gymtracker.training_log.exception.TrainingLogNotFoundException;
 import com.gymtracker.training_session.TrainingSession;
 import com.gymtracker.training_session.TrainingSessionDto;
@@ -24,17 +23,19 @@ public class TrainingLogServiceImpl implements TrainingLogService {
     private final ExerciseService exerciseService;
 
     @Override
-    public void createTrainingLogs(TrainingSessionDto trainingSessionDto, Long createdSessionId) {
+    public void createTrainingLogs(TrainingSessionDto trainingSessionDto,
+                                   Long createdSessionId) {
         trainingSessionDto.trainingLogDtoList().stream().map((trainingLog) -> trainingLogMapper.toEntity(trainingLog, createdSessionId)).forEach(trainingLogRepository::save);
     }
 
     @Override
     public void deleteTrainingLog(Long id) {
-        trainingLogRepository.findById(id).filter(trainingLog -> checkAuthorization(trainingLog.getTrainingSession())).ifPresentOrElse(trainingLog -> {
-            trainingLogRepository.deleteById(trainingLog.getId());
-        }, () -> {
-            throw new TrainingLogNotFoundException("Training log doesn't exist");
-        });
+        trainingLogRepository.findById(id)
+                .filter(trainingLog -> checkAuthorization(trainingLog.getTrainingSession()))
+                .ifPresentOrElse(
+                        trainingLog -> trainingLogRepository.deleteById(trainingLog.getId()),
+                        () -> { throw new TrainingLogNotFoundException("Training log doesn't exist"); }
+                );
     }
 
     @Override
@@ -97,8 +98,8 @@ public class TrainingLogServiceImpl implements TrainingLogService {
                 .collect(Collectors.toList());
     }
 
-
-    private boolean checkAuthorization(TrainingSession trainingSession) {
+    @Override
+    public boolean checkAuthorization(TrainingSession trainingSession) {
         if (!trainingSessionRetriever.isAuthorized(trainingSession)) {
             throw new UnauthorizedTrainingSessionAccessException("You are not a training session creator or admin");
         } else return true;

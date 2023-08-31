@@ -25,7 +25,11 @@ public class TrainingLogServiceImpl implements TrainingLogService {
     @Override
     public void createTrainingLogs(TrainingSessionDto trainingSessionDto,
                                    Long createdSessionId) {
-        trainingSessionDto.trainingLogDtoList().stream().map((trainingLog) -> trainingLogMapper.toEntity(trainingLog, createdSessionId)).forEach(trainingLogRepository::save);
+        trainingSessionDto.trainingLogDtoList().stream()
+                .map(
+                        (trainingLog) -> trainingLogMapper.toEntity(trainingLog, createdSessionId)
+                )
+                .forEach(trainingLogRepository::save);
     }
 
     @Override
@@ -34,7 +38,9 @@ public class TrainingLogServiceImpl implements TrainingLogService {
                 .filter(trainingLog -> checkAuthorization(trainingLog.getTrainingSession()))
                 .ifPresentOrElse(
                         trainingLog -> trainingLogRepository.deleteById(trainingLog.getId()),
-                        () -> { throw new TrainingLogNotFoundException("Training log doesn't exist"); }
+                        () -> {
+                            throw new TrainingLogNotFoundException("Training log doesn't exist");
+                        }
                 );
     }
 
@@ -53,8 +59,8 @@ public class TrainingLogServiceImpl implements TrainingLogService {
 
 
     @Override
-    public List<TrainingLogResponseDto> getTrainingLogsForTrainingSession(Long id) {
-        TrainingSession trainingSession = trainingSessionRetriever.getTrainingSessionById(id).filter(this::checkAuthorization).orElseThrow(() -> new TrainingSessionNotFoundException("Training session not found"));
+    public List<TrainingLogResponseDto> getTrainingLogsForTrainingSession(Long trainingSessionId) {
+        TrainingSession trainingSession = getAuthorizedTrainingSession(trainingSessionId);
 
         List<TrainingLogResponseDto> trainingLogResponseDtoList = trainingSession.getTrainingLogs().stream().map(map -> {
             String name = map.getExercise().getName();
@@ -75,7 +81,7 @@ public class TrainingLogServiceImpl implements TrainingLogService {
 
     @Override
     public List<TrainingLog> getAllByTrainingSessionId(Long trainingSessionId) {
-        TrainingSession trainingSession = trainingSessionRetriever.getTrainingSessionById(trainingSessionId).filter(this::checkAuthorization).orElseThrow(() -> new TrainingSessionNotFoundException("Training session not found"));
+        TrainingSession trainingSession = getAuthorizedTrainingSession(trainingSessionId);
 
         return trainingSession.getTrainingLogs();
     }
@@ -103,5 +109,11 @@ public class TrainingLogServiceImpl implements TrainingLogService {
         if (!trainingSessionRetriever.isAuthorized(trainingSession)) {
             throw new UnauthorizedTrainingSessionAccessException("You are not a training session creator or admin");
         } else return true;
+    }
+
+    private TrainingSession getAuthorizedTrainingSession(Long trainingSessionId) {
+        return trainingSessionRetriever.getTrainingSessionById(trainingSessionId)
+                .filter(this::checkAuthorization)
+                .orElseThrow(() -> new TrainingSessionNotFoundException("Training session not found"));
     }
 }

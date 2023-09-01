@@ -6,8 +6,6 @@ import java.util.Optional;
 public interface TrainingSessionService {
     void createTrainingSession(TrainingSessionDto trainingSessionDto);
 
-//    void editTrainingSession(Long id,
-//                             TrainingSessionDto trainingSessionDto);
 
     void deleteTrainingSession(Long id);
 
@@ -15,7 +13,6 @@ public interface TrainingSessionService {
 
     Optional<TrainingSession> getTrainingSessionById(Long id);
 
-    boolean isAuthorized(TrainingSession trainingSession);
 
     List<TrainingSessionResponseDto> getAllTrainingSessionsForLoggedUser();
 

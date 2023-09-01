@@ -2,10 +2,11 @@ package com.gymtracker.exercise;
 
 import com.gymtracker.exercise.exception.ExerciseAlreadyCreatedByAdminException;
 import com.gymtracker.exercise.exception.ExerciseNotFoundException;
-import com.gymtracker.exercise.exception.NotAuthorizedToAccessExerciseException;
+import com.gymtracker.exercise.exception.UnauthorizedToAccessExerciseException;
 import com.gymtracker.user.UserService;
 import com.gymtracker.user.entity.User;
 import com.gymtracker.user.entity.UserRoles;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -33,16 +34,29 @@ public class ExerciseServiceTest {
     @InjectMocks
     private ExerciseServiceImpl exerciseService;
 
+    private ExerciseDto exerciseDto;
+    private User loggedUser;
+    private Exercise exercise;
+    private Exercise existingExercise;
+    private Long exerciseId;
+
+    @Before
+    public void setUp() {
+        exerciseDto = new ExerciseDto(1L, "TEST", MuscleGroup.CHEST);
+        loggedUser = new User();
+        exercise = new Exercise();
+        existingExercise = new Exercise();
+        exerciseId = 1L;
+
+        when(userService.getLoggedUser()).thenReturn(loggedUser);
+        when(exerciseMapper.toEntity(exerciseDto, loggedUser)).thenReturn(exercise);
+        when(exerciseRepository.findById(exerciseId)).thenReturn(Optional.of(existingExercise));
+    }
 
     @Test
     public void testCreateExercise_Success() {
         // Arrange
-        ExerciseDto exerciseDto = new ExerciseDto(1L, "TEST", MuscleGroup.CHEST);
-        User loggedUser = new User();
-        when(userService.getLoggedUser()).thenReturn(loggedUser);
-
-        Exercise exercise = new Exercise();
-        when(exerciseMapper.toEntity(exerciseDto, loggedUser)).thenReturn(exercise);
+        when(exerciseRepository.findByNameAndAdminCreated(exercise.getName(), true)).thenReturn(Optional.empty());
 
         // Act
         exerciseService.createExercise(exerciseDto);
@@ -52,40 +66,34 @@ public class ExerciseServiceTest {
         verify(exerciseRepository, times(1)).save(exercise);
     }
 
-    @Test
+    @Test(expected = ExerciseAlreadyCreatedByAdminException.class)
     public void testCreateExercise_AlreadyCreatedByAdmin() {
         // Arrange
-        ExerciseDto exerciseDto = new ExerciseDto(1L, "TEST", MuscleGroup.CHEST);
-        User loggedUser = new User();
-        when(userService.getLoggedUser()).thenReturn(loggedUser);
-
-        Exercise exercise = new Exercise();
         exercise.setName("ExerciseName");
-        when(exerciseMapper.toEntity(exerciseDto, loggedUser)).thenReturn(exercise);
-
-        Exercise existingExercise = new Exercise();
         existingExercise.setName("ExerciseName");
+
+        when(userService.getLoggedUser()).thenReturn(loggedUser);
+        when(exerciseMapper.toEntity(exerciseDto, loggedUser)).thenReturn(exercise);
         when(exerciseRepository.findByNameAndAdminCreated("ExerciseName", true)).thenReturn(Optional.of(existingExercise));
 
         // Act & Assert
-        assertThrows(ExerciseAlreadyCreatedByAdminException.class, () -> exerciseService.createExercise(exerciseDto));
+        exerciseService.createExercise(exerciseDto);
         verify(exerciseRepository, never()).save(exercise);
     }
-
 
     @Test
     public void testEditExercise_Success() {
         // Arrange
         UserRoles userRoles = UserRoles.ADMIN;
-        Long exerciseId = 1L;
         User user = new User();
         ExerciseDto exerciseDto = new ExerciseDto(1L, "TEST", MuscleGroup.CHEST);
-        Exercise existingExercise = new Exercise();
+
         user.setUserRole(userRoles);
-        when(exerciseRepository.findById(exerciseId)).thenReturn(Optional.of(existingExercise));
         when(userService.getLoggedUser()).thenReturn(user);
+
         // Act
         exerciseService.editExercise(exerciseId, exerciseDto);
+
         // Assert
         verify(exerciseRepository, times(1)).save(existingExercise);
     }
@@ -93,25 +101,17 @@ public class ExerciseServiceTest {
     @Test(expected = ExerciseNotFoundException.class)
     public void testEditExercise_ExerciseNotFound() {
         // Arrange
-        Long exerciseId = 1L;
-        ExerciseDto exerciseDto = new ExerciseDto(1L, "TEST", MuscleGroup.CHEST);
         when(exerciseRepository.findById(exerciseId)).thenReturn(Optional.empty());
 
         // Act
         exerciseService.editExercise(exerciseId, exerciseDto);
     }
 
-    @Test(expected = NotAuthorizedToAccessExerciseException.class)
-    public void testEditExercise_NotAuthorized() {
+    @Test(expected = UnauthorizedToAccessExerciseException.class)
+    public void testEditExercise_Unauthorized() {
         // Arrange
         exerciseService = spy(exerciseService);
-
-        Long exerciseId = 1L;
-        ExerciseDto exerciseDto = new ExerciseDto(1L, "TEST", MuscleGroup.CHEST);
-        Exercise existingExercise = new Exercise();
-        User user = new User();
-        user.setUserRole(UserRoles.USER);
-        when(exerciseRepository.findById(exerciseId)).thenReturn(Optional.of(existingExercise));
+        existingExercise.setUser(new User());
         doReturn(false).when(exerciseService).isAuthorized(existingExercise);
 
         // Act
@@ -121,15 +121,10 @@ public class ExerciseServiceTest {
     @Test
     public void testDeleteExercise_Success() {
         // Arrange
-        Long exerciseId = 1L;
-        User user = new User();
-        user.setId(1L);
-        user.setUserRole(UserRoles.USER);
-
-        Exercise existingExercise = new Exercise();
-        existingExercise.setUser(user);
-        when(exerciseRepository.findById(exerciseId)).thenReturn(Optional.of(existingExercise));
-        when(userService.getLoggedUser()).thenReturn(user);
+        loggedUser.setId(1L);
+        loggedUser.setUserRole(UserRoles.USER);
+        existingExercise.setUser(loggedUser);
+        when(userService.getLoggedUser()).thenReturn(loggedUser);
 
         // Act
         exerciseService.deleteExercise(exerciseId);
@@ -139,23 +134,19 @@ public class ExerciseServiceTest {
     }
 
     @Test(expected = ExerciseNotFoundException.class)
-    public void testDeleteExercise_ExerciseNotFound() {
+    public void shouldDeleteExercise_ExerciseNotFound() {
         // Arrange
-        Long exerciseId = 1L;
         when(exerciseRepository.findById(exerciseId)).thenReturn(Optional.empty());
 
         // Act
         exerciseService.deleteExercise(exerciseId);
     }
 
-    @Test(expected = NotAuthorizedToAccessExerciseException.class)
-    public void testDeleteExercise_NotAuthorized() {
+    @Test(expected = UnauthorizedToAccessExerciseException.class)
+    public void testDeleteExercise_Unauthorized() {
         // Arrange
-        Long exerciseId = 1L;
         exerciseService = spy(exerciseService);
-        Exercise existingExercise = new Exercise();
-        when(exerciseRepository.findById(exerciseId)).thenReturn(Optional.of(existingExercise));
-
+        existingExercise.setUser(new User());
         doReturn(false).when(exerciseService).isAuthorized(existingExercise);
 
         // Act
@@ -164,40 +155,72 @@ public class ExerciseServiceTest {
 
     @Test
     public void testGetAllExercises_Success() {
-        // Given
-        User loggedUser = new User();
-        when(userService.getLoggedUser()).thenReturn(loggedUser);
-
-        // When
+        // Arrange
         List<ExerciseResponseDto> result = exerciseService.getAllExercises();
 
-        // Then
+        // Assert
         assertEquals(0, result.size());
     }
 
     @Test
-    public void testExistById_Exercise_EXIST() {
-        // Given
-        Long exerciseId = 1L;
+    public void testIsAuthorized_Admin_Success() {
+        // Arrange
+        loggedUser.setUserRole(UserRoles.ADMIN);
+
+        // Act && Assert
+        assertTrue(exerciseService.isAuthorized(exercise));
+    }
+
+    @Test
+    public void testIsAuthorized_User_Success() {
+        // Arrange
+        loggedUser.setUserRole(UserRoles.USER);
+        loggedUser.setId(1L);
+        exercise.setUser(loggedUser);
+
+        // Act && Assert
+        assertTrue(exerciseService.isAuthorized(exercise));
+    }
+
+    @Test
+    public void testIsAuthorized_Failed() {
+        // Arrange
+        loggedUser.setUserRole(UserRoles.USER);
+        loggedUser.setId(1L);
+
+        User unauthorizedUser = new User();
+        unauthorizedUser.setUserRole(UserRoles.USER);
+        unauthorizedUser.setId(2L);
+
+        exercise.setUser(loggedUser);
+
+        when(userService.getLoggedUser()).thenReturn(unauthorizedUser);
+
+        //Act && Assert
+        assertFalse(exerciseService.isAuthorized(exercise));
+    }
+
+    @Test
+    public void testExistById_Exercise_Exist() {
+        // Arrange
         when(exerciseRepository.existsById(exerciseId)).thenReturn(true);
 
-        // When
+        // Act
         boolean result = exerciseService.existById(exerciseId);
 
-        // Then
+        // Assert
         assertTrue(result);
     }
 
     @Test
-    public void testExistById_Exercise_NOT_EXIST() {
-        // Given
-        Long exerciseId = 1L;
+    public void testExistById_Exercise_Not_Exist() {
+        // Arrange
         when(exerciseRepository.existsById(exerciseId)).thenReturn(false);
 
-        // When
+        // Act
         boolean result = exerciseService.existById(exerciseId);
 
-        // Then
+        // Assert
         assertFalse(result);
     }
 }

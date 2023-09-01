@@ -2,7 +2,7 @@ package com.gymtracker.exercise;
 
 import com.gymtracker.exercise.exception.ExerciseAlreadyCreatedByAdminException;
 import com.gymtracker.exercise.exception.ExerciseNotFoundException;
-import com.gymtracker.exercise.exception.NotAuthorizedToAccessExerciseException;
+import com.gymtracker.exercise.exception.UnauthorizedToAccessExerciseException;
 import com.gymtracker.user.UserService;
 import com.gymtracker.user.entity.User;
 import com.gymtracker.user.entity.UserRoles;
@@ -69,7 +69,7 @@ public class ExerciseServiceImpl implements ExerciseService {
 
     private boolean checkAuthorization(Exercise exercise) {
         if (!isAuthorized(exercise)) {
-            throw new NotAuthorizedToAccessExerciseException("You are not a training session creator or admin");
+            throw new UnauthorizedToAccessExerciseException("You are not a training session creator or admin");
         } else return true;
     }
 

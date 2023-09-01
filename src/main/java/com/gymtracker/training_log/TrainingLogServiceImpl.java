@@ -1,6 +1,5 @@
 package com.gymtracker.training_log;
 
-import com.gymtracker.exercise.ExerciseService;
 import com.gymtracker.training_log.exception.TrainingLogNotFoundException;
 import com.gymtracker.training_session.TrainingSession;
 import com.gymtracker.training_session.TrainingSessionDto;
@@ -20,7 +19,6 @@ public class TrainingLogServiceImpl implements TrainingLogService {
     private final TrainingLogRepository trainingLogRepository;
     private final TrainingLogMapper trainingLogMapper;
     private final TrainingSessionRetriever trainingSessionRetriever;
-    private final ExerciseService exerciseService;
 
     @Override
     public void createTrainingLogs(TrainingSessionDto trainingSessionDto,
@@ -95,7 +93,6 @@ public class TrainingLogServiceImpl implements TrainingLogService {
                 .filter(this::checkAuthorization)
                 .orElseThrow(() -> new TrainingSessionNotFoundException("Training session not found"));
 
-        exerciseService.existById(exerciseId);
 
         return trainingSession.getTrainingLogs()
                 .stream()

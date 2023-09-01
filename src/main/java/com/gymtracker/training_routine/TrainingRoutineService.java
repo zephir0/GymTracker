@@ -30,7 +30,7 @@ public class TrainingRoutineService {
 
     public TrainingRoutine getTrainingRoutine(Long id) {
         return trainingRoutineRepository.findByTrainingRoutineId(id)
-                .map(this::isAuthorized)
+                .map(this::verifyUserAuthorizedForTrainingRoutine)
                 .orElseThrow(
                         () -> new TrainingRoutineNotFoundException("Training routine doesn't exist.")
                 );
@@ -59,7 +59,7 @@ public class TrainingRoutineService {
     public void archiveTrainingRoutine(Long routineId) {
         trainingRoutineRepository.findById(routineId)
                 .map(trainingRoutine -> {
-                    isAuthorized(trainingRoutine);
+                    verifyUserAuthorizedForTrainingRoutine(trainingRoutine);
                     trainingRoutine.setArchived(true);
                     return trainingRoutineRepository.save(trainingRoutine);
                 })
@@ -69,7 +69,7 @@ public class TrainingRoutineService {
 
     public Map<Long, TrainingLogResponseDto> getPreviousTrainingEntries(Long routineId) {
         TrainingRoutine trainingRoutine = trainingRoutineRepository.findById(routineId)
-                .map(this::isAuthorized)
+                .map(this::verifyUserAuthorizedForTrainingRoutine)
                 .orElseThrow(() -> new TrainingRoutineNotFoundException("Training routine not found"));
 
 
@@ -111,14 +111,15 @@ public class TrainingRoutineService {
     }
 
 
-    private TrainingRoutine isAuthorized(TrainingRoutine trainingRoutine) {
-        if (checkAuthorization(trainingRoutine)) {
+    private TrainingRoutine verifyUserAuthorizedForTrainingRoutine(TrainingRoutine trainingRoutine) {
+        if (isUserAuthorizedForTrainingRoutine(trainingRoutine)) {
             return trainingRoutine;
-        } else
-            throw new NotAuthorizedAccessTrainingRoutineException("You are not authorized to access that training routine");
+        } else {
+            throw new UnauthorizedAccessTrainingRoutineException("You are not authorized to access that training routine");
+        }
     }
 
-    private boolean checkAuthorization(TrainingRoutine trainingRoutine) {
+    private boolean isUserAuthorizedForTrainingRoutine(TrainingRoutine trainingRoutine) {
         User loggedUser = userService.getLoggedUser();
         return loggedUser.getId().equals(trainingRoutine.getUser().getId());
     }

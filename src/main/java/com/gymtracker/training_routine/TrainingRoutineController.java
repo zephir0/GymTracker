@@ -32,7 +32,7 @@ public class TrainingRoutineController {
     @PutMapping("/{trainingRoutineId}")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation("Archive a training routine")
-    public SuccessResponse deleteTrainingRoutine(@PathVariable Long trainingRoutineId) {
+    public SuccessResponse archiveTrainingRoutine(@PathVariable Long trainingRoutineId) {
         trainingRoutineService.archiveTrainingRoutine(trainingRoutineId);
         return new SuccessResponse(HttpStatus.OK, "Training routine has been archived.", LocalDateTime.now());
     }

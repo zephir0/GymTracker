@@ -1,4 +1,4 @@
-package response_model;
+package com.gymtracker.response_model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,8 +8,8 @@ import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
-public class SuccessResponse {
+public class ErrorResponse {
     private HttpStatus httpStatus;
-    private Object body;
+    private Object messages;
     private LocalDateTime timeStamp;
 }

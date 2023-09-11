@@ -1,6 +1,6 @@
 package com.gymtracker.exception;
 
-import response_model.ErrorResponse;
+import com.gymtracker.response_model.ErrorResponse;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.TransientPropertyValueException;
 import org.springframework.http.HttpStatus;

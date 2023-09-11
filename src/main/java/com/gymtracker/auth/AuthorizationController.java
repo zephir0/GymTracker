@@ -1,6 +1,6 @@
 package com.gymtracker.auth;
 
-import response_model.SuccessResponse;
+import com.gymtracker.response_model.SuccessResponse;
 import com.gymtracker.user.dto.UserLoginDto;
 import com.gymtracker.user.dto.UserRegisterDto;
 import io.swagger.annotations.Api;

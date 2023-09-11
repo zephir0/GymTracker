@@ -1,6 +1,6 @@
 package com.gymtracker.training_routine;
 
-import response_model.SuccessResponse;
+import com.gymtracker.response_model.SuccessResponse;
 import com.gymtracker.training_log.dto.TrainingLogResponseDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

@@ -1,7 +1,7 @@
 package com.gymtracker.configurations.filter;
 
 import com.gymtracker.auth.token.JwtTokenProvider;
-import response_model.ErrorResponse;
+import com.gymtracker.response_model.ErrorResponse;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.SignatureException;
 import org.springframework.http.HttpStatus;

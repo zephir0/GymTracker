@@ -3,7 +3,7 @@ package com.gymtracker.training_log;
 import com.gymtracker.training_log.dto.TrainingLogDto;
 import com.gymtracker.training_log.dto.TrainingLogResponseDto;
 import com.gymtracker.training_log.service.TrainingLogService;
-import response_model.SuccessResponse;
+import com.gymtracker.response_model.SuccessResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;

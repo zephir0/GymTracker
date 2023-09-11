@@ -1,6 +1,6 @@
 package com.gymtracker.ticket;
 
-import response_model.SuccessResponse;
+import com.gymtracker.response_model.SuccessResponse;
 import com.gymtracker.ticket.dto.TicketDto;
 import com.gymtracker.ticket.dto.TicketResponseDto;
 import com.gymtracker.ticket.service.TicketService;

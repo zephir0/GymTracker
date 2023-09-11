@@ -17,7 +17,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 
     @Cacheable(cacheNames = "users")
-    boolean existsByLogin(String login);
+    boolean existsByLoginOrEmailAddress(String login, String email);
 
     @Override
     @CacheEvict(cacheNames = "users", allEntries = true)

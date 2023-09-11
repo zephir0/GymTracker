@@ -1,5 +1,7 @@
 package com.gymtracker.chat;
 
+import com.gymtracker.chat.dto.MessageDto;
+import com.gymtracker.chat.dto.MessageResponseDto;
 import com.gymtracker.ticket.Ticket;
 import com.gymtracker.user.entity.User;
 import org.mapstruct.Mapper;

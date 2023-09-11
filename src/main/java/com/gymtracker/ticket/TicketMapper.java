@@ -1,5 +1,7 @@
 package com.gymtracker.ticket;
 
+import com.gymtracker.ticket.dto.TicketDto;
+import com.gymtracker.ticket.dto.TicketResponseDto;
 import com.gymtracker.user.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

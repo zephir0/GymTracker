@@ -11,8 +11,8 @@ import java.util.Optional;
 @Repository
 public interface TrainingRoutineRepository extends JpaRepository<TrainingRoutine, Long> {
 
-    @Query("SELECT tr FROM TrainingRoutine tr JOIN FETCH tr.exerciseList e  WHERE tr.id = :id")
-    Optional<TrainingRoutine> findByTrainingRoutineId(@Param("id") Long id);
+    @Query("SELECT tr FROM TrainingRoutine tr JOIN FETCH tr.exerciseList e  WHERE tr.id = :trainingRoutineId")
+    Optional<TrainingRoutine> findByTrainingRoutineId(@Param("trainingRoutineId") Long trainingRoutineId);
 
     @Query("SELECT DISTINCT tr FROM TrainingRoutine tr JOIN FETCH tr.exerciseList JOIN FETCH tr.user WHERE tr.user.id = :userId AND tr.isArchived = :isArchived")
     List<TrainingRoutine> findAllByUserIdAndArchived(@Param("userId") Long userId,

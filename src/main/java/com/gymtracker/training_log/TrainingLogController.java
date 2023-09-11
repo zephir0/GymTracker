@@ -1,19 +1,20 @@
 package com.gymtracker.training_log;
 
-import com.gymtracker.response.SuccessResponse;
+import com.gymtracker.training_log.dto.TrainingLogDto;
+import com.gymtracker.training_log.dto.TrainingLogResponseDto;
+import com.gymtracker.training_log.service.TrainingLogService;
+import response_model.SuccessResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 @Validated
 @RequestMapping("/api/training-logs")
@@ -21,27 +22,27 @@ import java.util.List;
 public class TrainingLogController {
     private final TrainingLogService trainingLogService;
 
-    @PutMapping("/{id}")
+    @PutMapping("/{trainingLogId}")
+    @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Edit a training log")
-    public ResponseEntity<SuccessResponse> editTrainingLog(@PathVariable Long id,
-                                                           @RequestBody @Validated TrainingLogDto trainingLogDto) {
-        trainingLogService.editTrainingLog(id, trainingLogDto);
-        SuccessResponse successResponse = new SuccessResponse(HttpStatus.OK, "Training log id: " + id + " has been changed", LocalDateTime.now());
-        return new ResponseEntity<>(successResponse, HttpStatus.OK);
+    public SuccessResponse editTrainingLog(@PathVariable Long trainingLogId,
+                                           @RequestBody @Validated TrainingLogDto trainingLogDto) {
+        trainingLogService.editTrainingLog(trainingLogId, trainingLogDto);
+        return new SuccessResponse(HttpStatus.OK, "Training log id: " + trainingLogId + " has been changed", LocalDateTime.now());
     }
 
-    @GetMapping("/gym-diary/{trainingSessionId}")
+    @GetMapping("/session/{trainingSessionId}")
+    @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Get training logs for a training session")
-    public ResponseEntity<List<TrainingLogResponseDto>> getTrainingLogsForTrainingSession(@PathVariable("trainingSessionId") Long trainingSessionId) {
-        List<TrainingLogResponseDto> trainingLogsForTrainingSession = trainingLogService.getTrainingLogsForTrainingSession(trainingSessionId);
-        return new ResponseEntity<>(trainingLogsForTrainingSession, HttpStatus.OK);
+    public List<TrainingLogResponseDto> getTrainingLogsForTrainingSession(@PathVariable("trainingSessionId") Long trainingSessionId) {
+        return trainingLogService.getTrainingLogsForTrainingSession(trainingSessionId);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{trainingLogId}")
+    @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Delete a training log")
-    public ResponseEntity<SuccessResponse> deleteTrainingLogById(@PathVariable Long id) {
-        trainingLogService.deleteTrainingLog(id);
-        SuccessResponse successResponse = new SuccessResponse(HttpStatus.OK, "Training log id: " + id + " has been deleted", LocalDateTime.now());
-        return new ResponseEntity<>(successResponse, HttpStatus.OK);
+    public SuccessResponse deleteTrainingLogById(@PathVariable Long trainingLogId) {
+        trainingLogService.deleteTrainingLog(trainingLogId);
+        return new SuccessResponse(HttpStatus.OK, "Training log id: " + trainingLogId + " has been deleted", LocalDateTime.now());
     }
 }

@@ -1,6 +1,6 @@
 package com.gymtracker.user.exception;
 
-import com.gymtracker.utils.ApiException;
+import com.gymtracker.exception.ApiException;
 import org.springframework.http.HttpStatus;
 
 public class UserNotLoggedInException extends ApiException {

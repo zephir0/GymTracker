@@ -1,10 +1,13 @@
 package com.gymtracker.training_log;
 
-import com.gymtracker.exercise.Exercise;
+import com.gymtracker.exercise.entity.Exercise;
+import com.gymtracker.training_log.dto.TrainingLogDto;
+import com.gymtracker.training_log.dto.TrainingLogResponseDto;
 import com.gymtracker.training_log.exception.TrainingLogNotFoundException;
+import com.gymtracker.training_log.service.TrainingLogServiceImpl;
 import com.gymtracker.training_session.TrainingSession;
-import com.gymtracker.training_session.TrainingSessionDto;
-import com.gymtracker.training_session.TrainingSessionRetriever;
+import com.gymtracker.training_session.dto.TrainingSessionDto;
+import com.gymtracker.training_session.service.TrainingSessionRetriever;
 import com.gymtracker.training_session.exception.TrainingSessionNotFoundException;
 import com.gymtracker.training_session.exception.UnauthorizedTrainingSessionAccessException;
 import com.gymtracker.user.entity.User;
@@ -47,7 +50,7 @@ public class TrainingLogServiceTest {
     @Before
     public void setUp() {
         sessionId = 1L;
-        trainingLogDto = new TrainingLogDto(10, 10, "1", 1L, 1L);
+        trainingLogDto = new TrainingLogDto(10, 10, "1", 1L);
         trainingSessionDto = new TrainingSessionDto(1L, Collections.singletonList(trainingLogDto));
         trainingLog = new TrainingLog();
         trainingSession = new TrainingSession();
@@ -72,7 +75,7 @@ public class TrainingLogServiceTest {
     @Test
     public void testCreateTrainingLog() {
         // Act
-        trainingLogService.createTrainingLogs(trainingSessionDto, sessionId);
+        trainingLogService.createTrainingLogs(trainingSessionDto.trainingLogDtoList(), sessionId);
 
         // Assert
         verify(trainingLogRepository, times(1)).save(any(TrainingLog.class));

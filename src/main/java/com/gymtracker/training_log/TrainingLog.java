@@ -1,6 +1,6 @@
 package com.gymtracker.training_log;
 
-import com.gymtracker.exercise.Exercise;
+import com.gymtracker.exercise.entity.Exercise;
 import com.gymtracker.training_session.TrainingSession;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,12 +24,11 @@ public class TrainingLog {
     private Long id;
 
     @Column(name = "reps")
-    @NotNull(message = "trainingLog.reps.notNull")
+    @NotNull
     @PositiveOrZero
     private Integer reps;
 
     @Column(name = "weight")
-    @NotNull(message = "trainingLog.weight.notNull")
     @PositiveOrZero
     private Integer weight;
 
@@ -38,12 +37,12 @@ public class TrainingLog {
 
     @ManyToOne
     @JoinColumn(name = "exercise_id")
-    @NotNull(message = "trainingLog.exerciseId.notNull")
+    @NotNull
     private Exercise exercise;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "training_session_id")
-    @NotNull(message = "trainingLog.trainingSessionId.notNull")
+    @NotNull()
     private TrainingSession trainingSession;
 
 }

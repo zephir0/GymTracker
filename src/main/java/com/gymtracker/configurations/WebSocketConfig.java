@@ -1,6 +1,6 @@
 package com.gymtracker.configurations;
 
-import com.gymtracker.chat.ChannelAuthorizationService;
+import com.gymtracker.chat.service.ChannelAuthorizationService;
 import com.gymtracker.configurations.interceptor.WebSocketAuthInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;

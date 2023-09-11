@@ -1,9 +1,11 @@
 package com.gymtracker.configurations.filter;
 
 import com.gymtracker.auth.token.JwtTokenProvider;
+import response_model.ErrorResponse;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.SignatureException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,7 +18,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.time.LocalDateTime;
 
 
 public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
@@ -52,7 +54,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
 
     private void handleException(HttpServletResponse response,
                                  Exception ex) throws IOException {
-        int statusCode = HttpStatus.UNAUTHORIZED.value();
+
         String errorMessage;
 
         if (ex instanceof SignatureException) {
@@ -61,7 +63,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
             errorMessage = "Token is expired";
         }
 
-        sendErrorResponse(response, statusCode, errorMessage);
+        sendErrorResponse(response, errorMessage);
     }
 
     private String extractTokenFromHeader(String header) {
@@ -75,16 +77,17 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
     }
 
     private void sendErrorResponse(HttpServletResponse response,
-                                   int statusCode,
                                    String errorMessage) throws IOException {
-        response.setStatus(statusCode);
-        response.setContentType("application/json");
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
-        String message = "{\"error\": \"" + errorMessage + "\"}";
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.UNAUTHORIZED, errorMessage, LocalDateTime.now());
+        String jsonResponse = "{" +
+                "\"httpStatus\":\"" + errorResponse.getHttpStatus() + "\"," +
+                "\"messages\":\"" + errorResponse.getMessages() + "\"," +
+                "\"timeStamp\":\"" + errorResponse.getTimeStamp() + "\"" +
+                "}";
 
-        try (PrintWriter printWriter = response.getWriter()) {
-            printWriter.write(message);
-            printWriter.flush();
-        }
+        response.getWriter().write(jsonResponse);
     }
 }

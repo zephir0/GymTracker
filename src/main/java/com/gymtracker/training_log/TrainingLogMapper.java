@@ -1,6 +1,7 @@
 package com.gymtracker.training_log;
 
-import com.gymtracker.exercise.Exercise;
+import com.gymtracker.training_log.dto.TrainingLogDto;
+import com.gymtracker.training_log.dto.TrainingLogResponseDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

@@ -1,11 +1,13 @@
 package com.gymtracker.training_session;
 
-import com.gymtracker.response.SuccessResponse;
+import com.gymtracker.training_session.dto.TrainingSessionDto;
+import com.gymtracker.training_session.dto.TrainingSessionResponseDto;
+import com.gymtracker.training_session.service.TrainingSessionService;
+import response_model.SuccessResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,32 +23,32 @@ public class TrainingSessionController {
     private final TrainingSessionService trainingSessionService;
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation("Create a new training session")
-    ResponseEntity<SuccessResponse> createTrainingSession(@RequestBody @Validated TrainingSessionDto trainingSessionDto) {
+    SuccessResponse createTrainingSession(@RequestBody @Validated TrainingSessionDto trainingSessionDto) {
         trainingSessionService.createTrainingSession(trainingSessionDto);
-        SuccessResponse successResponse = new SuccessResponse(HttpStatus.CREATED, "Training session has been created", LocalDateTime.now());
-        return new ResponseEntity<>(successResponse, HttpStatus.CREATED);
+        return new SuccessResponse(HttpStatus.CREATED, "Training session has been created", LocalDateTime.now());
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{trainingSessionId}")
+    @ResponseStatus(HttpStatus.OK)
     @ApiOperation("Delete a training session by ID")
-    ResponseEntity<SuccessResponse> deleteTrainingSession(@PathVariable Long id) {
-        trainingSessionService.deleteTrainingSession(id);
-        SuccessResponse successResponse = new SuccessResponse(HttpStatus.OK, "Training session has been deleted", LocalDateTime.now());
-        return new ResponseEntity<>(successResponse, HttpStatus.OK);
+    SuccessResponse deleteTrainingSession(@PathVariable Long trainingSessionId) {
+        trainingSessionService.deleteTrainingSession(trainingSessionId);
+        return new SuccessResponse(HttpStatus.OK, "Training session has been deleted", LocalDateTime.now());
     }
 
     @GetMapping("/user")
+    @ResponseStatus(HttpStatus.OK)
     @ApiOperation("Get all training sessions for logged user")
-    ResponseEntity<List<TrainingSessionResponseDto>> getAllTrainingSessionsForLoggedUser() {
-        List<TrainingSessionResponseDto> trainingSessions = trainingSessionService.getAllTrainingSessionsForLoggedUser();
-        return new ResponseEntity<>(trainingSessions, HttpStatus.OK);
+    List<TrainingSessionResponseDto> getAllTrainingSessionsForLoggedUser() {
+        return trainingSessionService.getAllTrainingSessionsForLoggedUser();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{trainingSessionId}")
+    @ResponseStatus(HttpStatus.OK)
     @ApiOperation("Get a training session by ID")
-    ResponseEntity<TrainingSessionResponseDto> getTrainingSessionById(@PathVariable Long id) {
-        TrainingSessionResponseDto trainingSessionById = trainingSessionService.getTrainingSessionDtoById(id);
-        return new ResponseEntity<>(trainingSessionById, HttpStatus.OK);
+    TrainingSessionResponseDto getTrainingSessionById(@PathVariable Long trainingSessionId) {
+        return trainingSessionService.getTrainingSessionDtoById(trainingSessionId);
     }
 }

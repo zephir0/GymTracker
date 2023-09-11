@@ -2,10 +2,11 @@ package com.gymtracker.training_routine;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.gymtracker.exercise.Exercise;
+import com.gymtracker.exercise.entity.Exercise;
 import com.gymtracker.training_session.TrainingSession;
 import com.gymtracker.user.entity.User;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -13,7 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Table(name = "training_routine")
 public class TrainingRoutine {
     @Id
@@ -39,6 +41,7 @@ public class TrainingRoutine {
             name = "training_routine_exercise",
             joinColumns = @JoinColumn(name = "training_routine_id"),
             inverseJoinColumns = @JoinColumn(name = "exercise_id"))
+    @NotNull
     private List<Exercise> exerciseList = new ArrayList<>();
 
     @OneToMany(mappedBy = "trainingRoutine")

@@ -24,4 +24,5 @@ public class ValidatorConfiguration {
         messageSource.setDefaultEncoding("UTF-8");
         return messageSource;
     }
+
 }

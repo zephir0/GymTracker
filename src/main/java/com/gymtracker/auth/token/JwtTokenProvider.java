@@ -2,8 +2,6 @@ package com.gymtracker.auth.token;
 
 import com.gymtracker.configurations.CustomUserDetailsManagerConfig;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,7 +11,6 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class JwtTokenProvider {
 
-    private static final Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class);
     private final CustomUserDetailsManagerConfig userDetailsManagerConfig;
     private final JwtTokenUtils jwtUtils;
 

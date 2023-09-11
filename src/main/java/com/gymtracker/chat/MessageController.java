@@ -1,5 +1,8 @@
 package com.gymtracker.chat;
 
+import com.gymtracker.chat.dto.MessageDto;
+import com.gymtracker.chat.dto.MessageResponseDto;
+import com.gymtracker.chat.service.MessageService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;

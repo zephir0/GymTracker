@@ -19,22 +19,23 @@ import java.util.List;
 @Cacheable(cacheNames = "tickets")
 @Table(name = "ticket")
 public class Ticket {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     @NotNull
     private User author;
+
     @Column(name = "subject")
     @NotNull
     private String subject;
+
     @Column(name = "description")
     @NotNull
     private String description;
-
 
     @Column(name = "creation_date")
     @NotNull

@@ -2,7 +2,7 @@ package com.gymtracker.user.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.gymtracker.exercise.Exercise;
+import com.gymtracker.exercise.entity.Exercise;
 import com.gymtracker.ticket.Ticket;
 import com.gymtracker.training_routine.TrainingRoutine;
 import com.gymtracker.training_session.TrainingSession;
@@ -31,17 +31,17 @@ public class User {
     @Column(name = "id")
     private Long id;
 
-    @Email(message = "user.email.validation")
-    @NotNull(message = "user.email.notNull")
+    @Email()
+    @NotNull()
     @Column(name = "email_address")
     private String emailAddress;
 
     @Column(name = "login")
-    @NotEmpty(message = "user.login.notNull")
+    @NotEmpty()
     private String login;
 
     @Column(name = "password")
-    @NotEmpty(message = "user.password.notNull")
+    @NotEmpty()
     private String password;
 
     @Enumerated(EnumType.STRING)

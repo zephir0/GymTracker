@@ -1,9 +1,12 @@
 package com.gymtracker.ticket;
 
 import com.gymtracker.chat.MessageRepository;
+import com.gymtracker.ticket.dto.TicketDto;
+import com.gymtracker.ticket.dto.TicketResponseDto;
 import com.gymtracker.ticket.exception.TicketNotFoundException;
 import com.gymtracker.ticket.exception.UnauthorizedTicketAccessException;
-import com.gymtracker.user.UserService;
+import com.gymtracker.ticket.service.TicketServiceImpl;
+import com.gymtracker.user.service.UserService;
 import com.gymtracker.user.entity.User;
 import com.gymtracker.user.entity.UserRoles;
 import org.junit.jupiter.api.BeforeEach;

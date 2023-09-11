@@ -1,6 +1,6 @@
 package com.gymtracker.configurations;
 
-import com.gymtracker.user.UserService;
+import com.gymtracker.user.service.UserService;
 import com.gymtracker.user.dto.UserLoginDto;
 import com.gymtracker.user.entity.UserRoles;
 import lombok.RequiredArgsConstructor;

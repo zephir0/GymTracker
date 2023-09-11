@@ -1,11 +1,13 @@
 package com.gymtracker.ticket;
 
-import com.gymtracker.response.SuccessResponse;
+import response_model.SuccessResponse;
+import com.gymtracker.ticket.dto.TicketDto;
+import com.gymtracker.ticket.dto.TicketResponseDto;
+import com.gymtracker.ticket.service.TicketService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,33 +23,33 @@ public class TicketController {
 
     @PostMapping()
     @ApiOperation(value = "Create a new ticket")
-    public ResponseEntity<SuccessResponse> createTicket(@RequestBody @Validated TicketDto ticketDto) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public SuccessResponse createTicket(@RequestBody @Validated TicketDto ticketDto) {
         ticketService.createTicket(ticketDto);
-        SuccessResponse successResponse = new SuccessResponse(HttpStatus.CREATED, "Ticket has been created.", LocalDateTime.now());
-        return new ResponseEntity<>(successResponse, HttpStatus.CREATED);
+        return new SuccessResponse(HttpStatus.CREATED, "Ticket has been created.", LocalDateTime.now());
     }
 
     @GetMapping()
     @ApiOperation(value = "Get all tickets")
-    public ResponseEntity<List<TicketResponseDto>> getAllTickets() {
-        List<TicketResponseDto> ticketList = ticketService.getAllTicketsForLoggedUser();
-        return new ResponseEntity<>(ticketList, HttpStatus.OK);
+    @ResponseStatus(HttpStatus.OK)
+    public List<TicketResponseDto> getAllTickets() {
+        return ticketService.getAllTicketsForLoggedUser();
     }
 
     @PutMapping("/{id}")
     @ApiOperation(value = "Edit a ticket")
-    public ResponseEntity<SuccessResponse> editTicket(@PathVariable Long id,
-                                                      @RequestBody @Validated TicketDto ticketDto) {
+    @ResponseStatus(HttpStatus.OK)
+    public SuccessResponse editTicket(@PathVariable Long id,
+                                      @RequestBody @Validated TicketDto ticketDto) {
         ticketService.editTicket(id, ticketDto);
-        SuccessResponse successResponse = new SuccessResponse(HttpStatus.OK, "Ticket has been edited.", LocalDateTime.now());
-        return new ResponseEntity<>(successResponse, HttpStatus.OK);
+        return new SuccessResponse(HttpStatus.OK, "Ticket has been edited.", LocalDateTime.now());
     }
 
     @DeleteMapping("/{id}")
     @ApiOperation(value = "Delete a ticket")
-    public ResponseEntity<SuccessResponse> deleteTicket(@PathVariable Long id) {
+    @ResponseStatus(HttpStatus.OK)
+    public SuccessResponse deleteTicket(@PathVariable Long id) {
         ticketService.deleteTicket(id);
-        SuccessResponse successResponse = new SuccessResponse(HttpStatus.OK, "Ticket deleted.", LocalDateTime.now());
-        return new ResponseEntity<>(successResponse, HttpStatus.OK);
+        return new SuccessResponse(HttpStatus.OK, "Ticket deleted.", LocalDateTime.now());
     }
 }

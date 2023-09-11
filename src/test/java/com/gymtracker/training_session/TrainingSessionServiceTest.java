@@ -1,10 +1,15 @@
 package com.gymtracker.training_session;
 
-import com.gymtracker.training_log.TrainingLogService;
+import com.gymtracker.training_log.service.TrainingLogService;
 import com.gymtracker.training_routine.TrainingRoutine;
-import com.gymtracker.training_routine.UnauthorizedAccessTrainingRoutineException;
+import com.gymtracker.training_routine.TrainingRoutineService;
+import com.gymtracker.training_routine.exception.UnauthorizedTrainingRoutineAccessException;
+import com.gymtracker.training_session.dto.TrainingSessionDto;
+import com.gymtracker.training_session.dto.TrainingSessionResponseDto;
 import com.gymtracker.training_session.exception.TrainingSessionNotFoundException;
-import com.gymtracker.user.UserService;
+import com.gymtracker.training_session.mapper.TrainingSessionMapper;
+import com.gymtracker.training_session.service.TrainingSessionServiceImpl;
+import com.gymtracker.user.service.UserService;
 import com.gymtracker.user.entity.User;
 import com.gymtracker.user.entity.UserRoles;
 import org.junit.Before;
@@ -32,6 +37,8 @@ public class TrainingSessionServiceTest {
     private UserService userService;
     @Mock
     private TrainingSessionMapper trainingSessionMapper;
+    @Mock
+    private TrainingRoutineService trainingRoutineService;
 
 
     @InjectMocks
@@ -71,25 +78,26 @@ public class TrainingSessionServiceTest {
     public void testCreateTrainingSession_Success() {
         // Arrange
         when(userService.getLoggedUser()).thenReturn(user);
-        when(trainingSessionMapper.toEntity(trainingSessionDto, user)).thenReturn(trainingSession);
+        when(trainingSessionMapper.toEntity(trainingRoutine, user)).thenReturn(trainingSession);
         when(trainingSessionRepository.save(trainingSession)).thenReturn(trainingSession);
-
+        when(trainingRoutineService.getTrainingRoutine(any())).thenReturn(trainingRoutine);
         // Act
         trainingSessionService.createTrainingSession(trainingSessionDto);
 
         // Assert
         verify(trainingSessionRepository, times(1)).save(trainingSession);
-        verify(trainingLogService, times(1)).createTrainingLogs(eq(trainingSessionDto), any());
+        verify(trainingLogService, times(1)).createTrainingLogs(eq(trainingSessionDto.trainingLogDtoList()), any());
     }
 
 
-    @Test(expected = UnauthorizedAccessTrainingRoutineException.class)
+    @Test(expected = UnauthorizedTrainingRoutineAccessException.class)
     public void testCreateTrainingSession_Unauthorized() {
         // Arrange
         trainingRoutine.setUser(unauthorizedUser);
 
         when(userService.getLoggedUser()).thenReturn(user);
-        when(trainingSessionMapper.toEntity(trainingSessionDto, user)).thenReturn(trainingSession);
+        when(trainingSessionMapper.toEntity(trainingRoutine, user)).thenReturn(trainingSession);
+        when(trainingRoutineService.getTrainingRoutine(any())).thenReturn(trainingRoutine);
 
 
         // Act
@@ -167,6 +175,10 @@ public class TrainingSessionServiceTest {
     public void testGetAllTrainingSessionsForLoggedUser_Success() {
         // Arrange
         when(userService.getLoggedUser()).thenReturn(user);
+        List<TrainingSession> trainingSessions = new ArrayList<>();
+        trainingSessions.add(trainingSession);
+        when(trainingSessionRepository.findTrainingSessionsByUser(user)).thenReturn(trainingSessions);
+
 
         // Act
         List<TrainingSessionResponseDto> result = trainingSessionService.getAllTrainingSessionsForLoggedUser();
@@ -175,18 +187,13 @@ public class TrainingSessionServiceTest {
         assertNotNull(result);
     }
 
-    @Test
+    @Test(expected = TrainingSessionNotFoundException.class)
     public void testGetAllTrainingSessionsForLoggedUser_NoTrainingSessions() {
         // Arrange
         when(userService.getLoggedUser()).thenReturn(user);
-        when(trainingSessionRepository.findTrainingSessionsByUser(user)).thenReturn(new ArrayList<>());
 
         // Act
-        List<TrainingSessionResponseDto> result = trainingSessionService.getAllTrainingSessionsForLoggedUser();
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(0, result.size());
+        trainingSessionService.getAllTrainingSessionsForLoggedUser();
     }
 
 }

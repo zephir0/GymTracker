@@ -1,13 +1,16 @@
 package com.gymtracker.training_routine;
 
-import com.gymtracker.exercise.Exercise;
-import com.gymtracker.exercise.ExerciseDto;
+import com.gymtracker.exercise.entity.Exercise;
+import com.gymtracker.exercise.dto.ExerciseDto;
 import com.gymtracker.exercise.ExerciseRepository;
 import com.gymtracker.training_log.TrainingLog;
 import com.gymtracker.training_log.TrainingLogMapper;
-import com.gymtracker.training_log.TrainingLogResponseDto;
-import com.gymtracker.training_log.TrainingLogService;
-import com.gymtracker.user.UserService;
+import com.gymtracker.training_log.dto.TrainingLogResponseDto;
+import com.gymtracker.training_log.service.TrainingLogService;
+import com.gymtracker.training_routine.exception.TrainingRoutineNotFoundException;
+import com.gymtracker.training_routine.exception.UnauthorizedTrainingRoutineAccessException;
+import com.gymtracker.training_routine.mapper.TrainingRoutineMapper;
+import com.gymtracker.user.service.UserService;
 import com.gymtracker.user.entity.User;
 import com.gymtracker.user.entity.UserRoles;
 import lombok.AllArgsConstructor;
@@ -28,8 +31,8 @@ public class TrainingRoutineService {
     private final TrainingLogService trainingLogService;
     private final TrainingLogMapper trainingLogMapper;
 
-    public TrainingRoutine getTrainingRoutine(Long id) {
-        return trainingRoutineRepository.findByTrainingRoutineId(id)
+    public TrainingRoutine getTrainingRoutine(Long trainingRoutineId) {
+        return trainingRoutineRepository.findByTrainingRoutineId(trainingRoutineId)
                 .map(this::verifyUserAuthorizedForTrainingRoutine)
                 .orElseThrow(
                         () -> new TrainingRoutineNotFoundException("Training routine doesn't exist.")
@@ -47,7 +50,8 @@ public class TrainingRoutineService {
         TrainingRoutine routine = trainingRoutineMapper
                 .toEntity(trainingRoutineDto, loggedUser);
 
-        trainingRoutineDto.exerciseList().stream()
+        trainingRoutineDto.exerciseList()
+                .stream()
                 .map(exerciseDto -> createAndSaveExercise(exerciseDto, loggedUser))
                 .filter(exercise -> routineHasNotExercise(routine, exercise))
                 .forEach(routine::addExercise);
@@ -56,8 +60,8 @@ public class TrainingRoutineService {
     }
 
     @Transactional
-    public void archiveTrainingRoutine(Long routineId) {
-        trainingRoutineRepository.findById(routineId)
+    public void archiveTrainingRoutine(Long trainingRoutineId) {
+        trainingRoutineRepository.findById(trainingRoutineId)
                 .map(trainingRoutine -> {
                     verifyUserAuthorizedForTrainingRoutine(trainingRoutine);
                     trainingRoutine.setArchived(true);
@@ -67,15 +71,16 @@ public class TrainingRoutineService {
     }
 
 
-    public Map<Long, TrainingLogResponseDto> getPreviousTrainingEntries(Long routineId) {
-        TrainingRoutine trainingRoutine = trainingRoutineRepository.findById(routineId)
+    public Map<Long, TrainingLogResponseDto> getPreviousTrainingEntries(Long trainingRoutineId) {
+        TrainingRoutine trainingRoutine = trainingRoutineRepository.findById(trainingRoutineId)
                 .map(this::verifyUserAuthorizedForTrainingRoutine)
                 .orElseThrow(() -> new TrainingRoutineNotFoundException("Training routine not found"));
 
 
         Map<Long, TrainingLogResponseDto> previousTrainingEntriesMap = new HashMap<>();
 
-        trainingRoutine.getExerciseList().stream()
+        trainingRoutine.getExerciseList()
+                .stream()
                 .filter(exercise -> !trainingLogService.getAllByExerciseId(exercise.getId()).isEmpty())
                 .forEach(exercise ->
                         addLatestTrainingLog(previousTrainingEntriesMap, exercise)
@@ -87,14 +92,15 @@ public class TrainingRoutineService {
 
     private Exercise createAndSaveExercise(ExerciseDto exerciseDto,
                                            User user) {
-        return exerciseRepository.findByExerciseNameAndUserIdOrAdminCreated(exerciseDto.name(), user.getId(), true).orElseGet(() -> {
-            Exercise exercise = new Exercise();
-            exercise.setName(exerciseDto.name());
-            exercise.setMuscleGroup(exerciseDto.muscleGroup());
-            exercise.setAdminCreated(user.getUserRole().equals(UserRoles.ADMIN));
-            exercise.setUser(user);
-            return exerciseRepository.save(exercise);
-        });
+        return exerciseRepository.findByExerciseNameAndUserIdOrAdminCreated(exerciseDto.name(), user.getId(), true)
+                .orElseGet(() -> {
+                    Exercise exercise = new Exercise();
+                    exercise.setName(exerciseDto.name());
+                    exercise.setMuscleGroup(exerciseDto.muscleGroup());
+                    exercise.setAdminCreated(user.getUserRole().equals(UserRoles.ADMIN));
+                    exercise.setUser(user);
+                    return exerciseRepository.save(exercise);
+                });
     }
 
     private void addLatestTrainingLog(Map<Long, TrainingLogResponseDto> map,
@@ -115,7 +121,7 @@ public class TrainingRoutineService {
         if (isUserAuthorizedForTrainingRoutine(trainingRoutine)) {
             return trainingRoutine;
         } else {
-            throw new UnauthorizedAccessTrainingRoutineException("You are not authorized to access that training routine");
+            throw new UnauthorizedTrainingRoutineAccessException("You are not authorized to access that training routine");
         }
     }
 

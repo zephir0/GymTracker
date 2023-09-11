@@ -1,7 +1,7 @@
 package com.gymtracker.configurations.interceptor;
 
-import com.gymtracker.chat.ChannelAuthorizationService;
-import com.gymtracker.chat.exception.NotAuthorizedToSubscribeChannelException;
+import com.gymtracker.chat.service.ChannelAuthorizationService;
+import com.gymtracker.chat.exception.ChannelSubscriptionException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
@@ -39,7 +39,7 @@ public class WebSocketAuthInterceptor implements ChannelInterceptor {
         String channelId = extractChannel(destination);
 
         if (!authorizationService.isUserAuthorized(channelId, username)) {
-            throw new NotAuthorizedToSubscribeChannelException("User " + username + " is not authorized to join channel " + channelId);
+            throw new ChannelSubscriptionException("User " + username + " is not authorized to join channel " + channelId);
         }
     }
 

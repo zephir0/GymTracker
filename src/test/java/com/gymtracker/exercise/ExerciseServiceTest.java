@@ -1,9 +1,14 @@
 package com.gymtracker.exercise;
 
+import com.gymtracker.exercise.dto.ExerciseDto;
+import com.gymtracker.exercise.dto.ExerciseResponseDto;
+import com.gymtracker.exercise.entity.Exercise;
+import com.gymtracker.exercise.entity.MuscleGroup;
 import com.gymtracker.exercise.exception.ExerciseAlreadyCreatedByAdminException;
 import com.gymtracker.exercise.exception.ExerciseNotFoundException;
-import com.gymtracker.exercise.exception.UnauthorizedToAccessExerciseException;
-import com.gymtracker.user.UserService;
+import com.gymtracker.exercise.exception.UnauthorizedExerciseAccessException;
+import com.gymtracker.exercise.service.ExerciseServiceImpl;
+import com.gymtracker.user.service.UserService;
 import com.gymtracker.user.entity.User;
 import com.gymtracker.user.entity.UserRoles;
 import org.junit.Before;
@@ -107,7 +112,7 @@ public class ExerciseServiceTest {
         exerciseService.editExercise(exerciseId, exerciseDto);
     }
 
-    @Test(expected = UnauthorizedToAccessExerciseException.class)
+    @Test(expected = UnauthorizedExerciseAccessException.class)
     public void testEditExercise_Unauthorized() {
         // Arrange
         exerciseService = spy(exerciseService);
@@ -142,7 +147,7 @@ public class ExerciseServiceTest {
         exerciseService.deleteExercise(exerciseId);
     }
 
-    @Test(expected = UnauthorizedToAccessExerciseException.class)
+    @Test(expected = UnauthorizedExerciseAccessException.class)
     public void testDeleteExercise_Unauthorized() {
         // Arrange
         exerciseService = spy(exerciseService);
@@ -200,27 +205,5 @@ public class ExerciseServiceTest {
         assertFalse(exerciseService.isAuthorized(exercise));
     }
 
-    @Test
-    public void testExistById_Exercise_Exist() {
-        // Arrange
-        when(exerciseRepository.existsById(exerciseId)).thenReturn(true);
 
-        // Act
-        boolean result = exerciseService.existById(exerciseId);
-
-        // Assert
-        assertTrue(result);
-    }
-
-    @Test
-    public void testExistById_Exercise_Not_Exist() {
-        // Arrange
-        when(exerciseRepository.existsById(exerciseId)).thenReturn(false);
-
-        // Act
-        boolean result = exerciseService.existById(exerciseId);
-
-        // Assert
-        assertFalse(result);
-    }
 }

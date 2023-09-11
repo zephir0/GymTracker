@@ -1,7 +1,7 @@
 package com.gymtracker;
 
 import com.gymtracker.user.UserRepository;
-import com.gymtracker.user.UserServiceImpl;
+import com.gymtracker.user.service.UserServiceImpl;
 import com.gymtracker.user.dto.UserLoginDto;
 import com.gymtracker.user.dto.UserResponseDto;
 import com.gymtracker.user.entity.User;

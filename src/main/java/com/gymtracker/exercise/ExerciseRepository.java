@@ -1,5 +1,6 @@
 package com.gymtracker.exercise;
 
+import com.gymtracker.exercise.entity.Exercise;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.EnableCaching;
@@ -18,8 +19,6 @@ public interface ExerciseRepository extends JpaRepository<Exercise, Long> {
     Optional<Exercise> findByExerciseNameAndUserIdOrAdminCreated(@Param("name") String name,
                                                                  @Param("userId") Long userId,
                                                                  @Param("isAdminCreated") boolean isAdminCreated);
-
-
 
     @Cacheable(cacheNames = "exercises")
     List<Exercise> findAllByUserIdOrAdminCreated(Long userId,

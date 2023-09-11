@@ -1,8 +1,8 @@
 package com.gymtracker.configurations;
 
 import com.gymtracker.auth.handlers.CustomLogoutSuccessHandler;
-import com.gymtracker.configurations.filter.JwtAuthenticationFilter;
 import com.gymtracker.auth.token.JwtTokenProvider;
+import com.gymtracker.configurations.filter.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.context.annotation.Bean;
@@ -66,5 +66,8 @@ public class WebSecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+
     }
+
+
 }

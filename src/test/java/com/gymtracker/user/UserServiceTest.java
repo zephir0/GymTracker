@@ -1,13 +1,12 @@
-package com.gymtracker;
+package com.gymtracker.user;
 
-import com.gymtracker.user.UserRepository;
-import com.gymtracker.user.service.UserServiceImpl;
 import com.gymtracker.user.dto.UserLoginDto;
 import com.gymtracker.user.dto.UserResponseDto;
 import com.gymtracker.user.entity.User;
 import com.gymtracker.user.entity.UserRoles;
 import com.gymtracker.user.exception.UserNotLoggedInException;
 import com.gymtracker.user.mapper.UserMapper;
+import com.gymtracker.user.service.UserServiceImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

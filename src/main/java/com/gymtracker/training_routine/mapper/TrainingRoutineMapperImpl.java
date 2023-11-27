@@ -8,11 +8,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class TrainingRoutineMapperImpl implements TrainingRoutineMapper {
     @Override
-    public TrainingRoutineDto toDto(TrainingRoutine trainingRoutine) {
-        return null;
-    }
-
-    @Override
     public TrainingRoutine toEntity(TrainingRoutineDto trainingRoutineDto,
                                     User user) {
         TrainingRoutine trainingRoutine = new TrainingRoutine();

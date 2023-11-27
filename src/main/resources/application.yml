@@ -34,6 +34,4 @@ spring:
 server:
   error:
     include-stacktrace: never
-  port: 20183
-
-
+  port: 8081

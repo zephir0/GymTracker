@@ -1,8 +1,8 @@
 package com.gymtracker.training_routine;
 
-import com.gymtracker.exercise.entity.Exercise;
-import com.gymtracker.exercise.dto.ExerciseDto;
 import com.gymtracker.exercise.ExerciseRepository;
+import com.gymtracker.exercise.dto.ExerciseDto;
+import com.gymtracker.exercise.entity.Exercise;
 import com.gymtracker.training_log.TrainingLog;
 import com.gymtracker.training_log.TrainingLogMapper;
 import com.gymtracker.training_log.dto.TrainingLogResponseDto;
@@ -10,9 +10,9 @@ import com.gymtracker.training_log.service.TrainingLogService;
 import com.gymtracker.training_routine.exception.TrainingRoutineNotFoundException;
 import com.gymtracker.training_routine.exception.UnauthorizedTrainingRoutineAccessException;
 import com.gymtracker.training_routine.mapper.TrainingRoutineMapper;
-import com.gymtracker.user.service.UserService;
 import com.gymtracker.user.entity.User;
 import com.gymtracker.user.entity.UserRoles;
+import com.gymtracker.user.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 

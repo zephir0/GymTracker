@@ -20,7 +20,7 @@ public class JwtTokenUtils {
     @Value("${app.jwt.expiration-in-ms}")
     private int jwtExpirationInMs;
 
-    public Claims getClaimsFromToken(String token) {
+    private Claims getClaimsFromToken(String token) {
         return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
     }
 
@@ -30,7 +30,7 @@ public class JwtTokenUtils {
         return Jwts.builder().setSubject(username).setIssuedAt(dateNow).setExpiration(expiryDate).signWith(SignatureAlgorithm.HS512, jwtSecret).compact();
     }
 
-    public Date getExpirationDateFromToken(String token) {
+    private Date getExpirationDateFromToken(String token) {
         Claims claimsFromToken = getClaimsFromToken(token);
         return claimsFromToken.getExpiration();
     }

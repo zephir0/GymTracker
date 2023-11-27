@@ -2,6 +2,7 @@ package com.gymtracker.configurations;
 
 import com.gymtracker.auth.handlers.CustomLogoutSuccessHandler;
 import com.gymtracker.auth.token.JwtTokenProvider;
+import com.gymtracker.auth.token.JwtTokenStore;
 import com.gymtracker.configurations.filter.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -24,28 +25,28 @@ import org.springframework.security.web.SecurityFilterChain;
         prePostEnabled = true)
 public class WebSecurityConfig {
     private final JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenStore jwtTokenStore;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/api/user**")
+                .antMatchers("/api/users/**", "/api/training-logs/**", "/api/training-routines/**", "/api/training-sessions/**", "/api/tickets/**", "/api/exercises/**")
                 .hasAnyRole("ADMIN", "USER")
-                .antMatchers("/api/auth**")
+                .antMatchers("/api/auth/**")
                 .permitAll()
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .addFilter(new JwtAuthenticationFilter(authenticationManager(authenticationConfiguration()), jwtTokenProvider));
+                .addFilter(new JwtAuthenticationFilter(authenticationManager(authenticationConfiguration()), jwtTokenProvider, jwtTokenStore));
 
 
         http.logout()
                 .logoutUrl("/api/auth/logout")
                 .invalidateHttpSession(true)
                 .clearAuthentication(true)
-                .deleteCookies("JSESSIONID")
-                .logoutSuccessHandler(new CustomLogoutSuccessHandler())
+                .logoutSuccessHandler(new CustomLogoutSuccessHandler(jwtTokenStore))
                 .permitAll();
 
 

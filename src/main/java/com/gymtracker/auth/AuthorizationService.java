@@ -2,6 +2,7 @@ package com.gymtracker.auth;
 
 import com.gymtracker.auth.exception.UserAlreadyExistException;
 import com.gymtracker.auth.token.JwtTokenProvider;
+import com.gymtracker.auth.token.JwtTokenStore;
 import com.gymtracker.user.UserRepository;
 import com.gymtracker.user.dto.UserLoginDto;
 import com.gymtracker.user.dto.UserRegisterDto;
@@ -21,6 +22,7 @@ public class AuthorizationService {
     private final UserRegisterMapper userRegisterMapper;
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenStore jwtTokenStore;
 
     public void register(UserRegisterDto userRegisterDto) {
         if (userRepository.existsByLoginOrEmailAddress(userRegisterDto.login(), userRegisterDto.emailAddress())) {
@@ -33,7 +35,9 @@ public class AuthorizationService {
     public String login(UserLoginDto userLoginDto) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userLoginDto.login(), userLoginDto.password()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        return jwtTokenProvider.generateToken(authentication);
+        String token = jwtTokenProvider.generateToken(authentication);
+        jwtTokenStore.storeToken(token);
+        return token;
     }
 
 }

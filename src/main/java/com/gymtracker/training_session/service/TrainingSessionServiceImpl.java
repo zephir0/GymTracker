@@ -5,15 +5,15 @@ import com.gymtracker.training_routine.TrainingRoutine;
 import com.gymtracker.training_routine.TrainingRoutineService;
 import com.gymtracker.training_routine.exception.UnauthorizedTrainingRoutineAccessException;
 import com.gymtracker.training_session.TrainingSession;
-import com.gymtracker.training_session.mapper.TrainingSessionMapper;
 import com.gymtracker.training_session.TrainingSessionRepository;
 import com.gymtracker.training_session.dto.TrainingSessionDto;
 import com.gymtracker.training_session.dto.TrainingSessionResponseDto;
 import com.gymtracker.training_session.exception.TrainingSessionNotFoundException;
 import com.gymtracker.training_session.exception.UnauthorizedTrainingSessionAccessException;
-import com.gymtracker.user.service.UserService;
+import com.gymtracker.training_session.mapper.TrainingSessionMapper;
 import com.gymtracker.user.entity.User;
 import com.gymtracker.user.entity.UserRoles;
+import com.gymtracker.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

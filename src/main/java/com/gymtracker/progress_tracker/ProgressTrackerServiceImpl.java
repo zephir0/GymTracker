@@ -5,8 +5,8 @@ import com.gymtracker.training_log.TrainingLogMapper;
 import com.gymtracker.training_log.dto.TrainingLogResponseDto;
 import com.gymtracker.training_log.service.TrainingLogService;
 import com.gymtracker.training_session.TrainingSessionRepository;
-import com.gymtracker.user.service.UserService;
 import com.gymtracker.user.entity.User;
+import com.gymtracker.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -54,7 +54,7 @@ public class ProgressTrackerServiceImpl implements ProgressTrackerService {
     private List<TrainingLog> sortByWeightAndReps(List<TrainingLog> trainingLogs) {
         return trainingLogs.stream()
                 .sorted(Comparator.comparing(TrainingLog::getWeight, Comparator.reverseOrder())
-                .thenComparing(TrainingLog::getReps, Comparator.reverseOrder()))
+                        .thenComparing(TrainingLog::getReps, Comparator.reverseOrder()))
                 .collect(Collectors.toList());
     }
 

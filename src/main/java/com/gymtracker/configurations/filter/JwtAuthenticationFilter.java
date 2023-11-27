@@ -1,6 +1,7 @@
 package com.gymtracker.configurations.filter;
 
 import com.gymtracker.auth.token.JwtTokenProvider;
+import com.gymtracker.auth.token.JwtTokenStore;
 import com.gymtracker.response_model.ErrorResponse;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.SignatureException;
@@ -24,11 +25,14 @@ import java.time.LocalDateTime;
 public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
 
     private final JwtTokenProvider tokenProvider;
+    private final JwtTokenStore jwtTokenStore;
 
     public JwtAuthenticationFilter(AuthenticationManager authenticationManager,
-                                   JwtTokenProvider tokenProvider) {
+                                   JwtTokenProvider tokenProvider,
+                                   JwtTokenStore jwtTokenStore) {
         super(authenticationManager);
         this.tokenProvider = tokenProvider;
+        this.jwtTokenStore = jwtTokenStore;
     }
 
     @Override
@@ -44,9 +48,14 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
 
         try {
             String token = extractTokenFromHeader(header);
-            Authentication authentication = tokenProvider.getAuthentication(token);
-            authenticateUser(request, (UsernamePasswordAuthenticationToken) authentication);
-            chain.doFilter(request, response);
+            if (jwtTokenStore.isTokenValid(token)) {
+                Authentication authentication = tokenProvider.getAuthentication(token);
+                authenticateUser(request, (UsernamePasswordAuthenticationToken) authentication);
+                chain.doFilter(request, response);
+            } else {
+                throw new SignatureException("Token has expired");
+            }
+
         } catch (SignatureException | ExpiredJwtException ex) {
             handleException(response, ex);
         }

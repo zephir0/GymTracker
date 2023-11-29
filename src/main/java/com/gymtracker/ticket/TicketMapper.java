@@ -10,7 +10,7 @@ import org.mapstruct.Mapping;
 public interface TicketMapper {
 
 
-    @Mapping(target = "author", source = "user")
+    @Mapping(target = "user", source = "user")
     @Mapping(target = "messageList", ignore = true)
     @Mapping(target = "creationDate", expression = "java(java.time.LocalDateTime.now())")
     Ticket toEntity(TicketDto ticketDto,

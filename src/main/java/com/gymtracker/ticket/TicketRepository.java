@@ -16,7 +16,7 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     @Cacheable(cacheNames = "tickets")
     Optional<Ticket> findById(Long ticketId);
 
-    List<Ticket> findAllByAuthorId(Long authorId);
+    List<Ticket> findAllByUserId(Long authorId);
 
     @Override
     @CacheEvict(cacheNames = "tickets", allEntries = true)

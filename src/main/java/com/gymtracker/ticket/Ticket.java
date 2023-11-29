@@ -27,7 +27,7 @@ public class Ticket {
     @ManyToOne
     @JoinColumn(name = "user_id")
     @NotNull
-    private User author;
+    private User user;
 
     @Column(name = "subject")
     @NotNull

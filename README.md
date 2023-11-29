@@ -45,9 +45,9 @@ To set up the GymTracker backend server locally, follow these steps:
    ```bash
    mvn install
 
-4. Run the application:
+4. Run the application with the embedded database (HSQLDB):
    ```bash
-   mvn spring-boot:run
+   mvn spring-boot:run "-Dspring-boot.run.profiles=dev"
 
 ## Usage
 The GymTracker backend server provides RESTful API endpoints for managing workouts, users, and authentication.

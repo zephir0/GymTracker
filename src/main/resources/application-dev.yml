@@ -15,25 +15,19 @@ spring:
     type: simple
     cache-names: users, exercises, tickets, messages, training_sessions, training_logs
   datasource:
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    driver-class-name: org.hsqldb.jdbc.JDBCDriver
+    url: jdbc:hsqldb:mem:testdb;sql.syntax_mys=true
+    username: sa
+    password:
+
   jpa:
-    properties:
-      hibernate:
-        cache:
-          use_second_level_cache: true
-          use_query_cache: true
-          region:
-            factory_class: org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory
-        show_sql: true
-        dialect: org.hibernate.dialect.MySQL8Dialect
+    database-platform: org.hibernate.dialect.HSQLDialect
     hibernate:
       ddl-auto: update
+    show-sql: true
   config:
     activate:
-      on-profile: prod
-
+      on-profile: dev
 server:
   error:
     include-stacktrace: never

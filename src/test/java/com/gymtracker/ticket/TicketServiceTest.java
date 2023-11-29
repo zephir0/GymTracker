@@ -50,7 +50,7 @@ public class TicketServiceTest {
         user.setUserRole(UserRoles.USER);
         ticket = new Ticket();
         ticket.setId(ticketId);
-        ticket.setAuthor(user);
+        ticket.setUser(user);
         ticketDto = new TicketDto("subject", "name");
         ticketResponseDto = new TicketResponseDto("subject", "name", LocalDateTime.now());
 
@@ -111,7 +111,7 @@ public class TicketServiceTest {
     public void testGetAllTicketsForLoggedUser() {
         List<Ticket> tickets = new ArrayList<>();
         tickets.add(ticket);
-        when(ticketRepository.findAllByAuthorId(user.getId())).thenReturn(tickets);
+        when(ticketRepository.findAllByUserId(user.getId())).thenReturn(tickets);
         when(ticketMapper.toDto(ticket)).thenReturn(ticketResponseDto);
 
         List<TicketResponseDto> anotherTicketResponseDto = ticketService.getAllTicketsForLoggedUser();
@@ -125,7 +125,7 @@ public class TicketServiceTest {
         anotherUser.setId(2L);
         anotherUser.setUserRole(UserRoles.USER);
 
-        ticket.setAuthor(anotherUser);
+        ticket.setUser(anotherUser);
 
         assertThrows(UnauthorizedTicketAccessException.class, () -> ticketService.checkAuthorization(ticket));
     }

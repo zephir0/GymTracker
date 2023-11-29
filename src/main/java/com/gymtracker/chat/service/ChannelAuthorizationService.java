@@ -24,7 +24,7 @@ public class ChannelAuthorizationService {
         } else {
             Ticket ticket = ticketRepository.findById(Long.valueOf(ticketId))
                     .orElseThrow(() -> new TicketNotFoundException("Ticket doesn't exist"));
-            return username.equals(ticket.getAuthor().getLogin());
+            return username.equals(ticket.getUser().getLogin());
         }
     }
 }

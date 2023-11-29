@@ -72,7 +72,7 @@ public class TicketServiceImpl implements TicketService {
     @Override
     public List<TicketResponseDto> getAllTicketsForLoggedUser() {
         User loggedUser = userService.getLoggedUser();
-        return ticketRepository.findAllByAuthorId(loggedUser.getId())
+        return ticketRepository.findAllByUserId(loggedUser.getId())
                 .stream()
                 .map(ticketMapper::toDto)
                 .collect(Collectors.toList());
@@ -81,7 +81,7 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     public Ticket checkAuthorization(Ticket ticket) {
-        if (ticket.getAuthor().getId().equals(userService.getLoggedUser().getId()) || ticket.getAuthor().getUserRole().equals(UserRoles.ADMIN)) {
+        if (ticket.getUser().getId().equals(userService.getLoggedUser().getId()) || ticket.getUser().getUserRole().equals(UserRoles.ADMIN)) {
             return ticket;
         } else throw new UnauthorizedTicketAccessException("You are not authorized to access this ticket.");
 

@@ -14,7 +14,7 @@ public class DataSourceProperties {
     @Value("${DB_USERNAME}")
     private String dbUsername;
 
-    @Value("${DB_TEST_URL}")
+    @Value("${DB_URL}")
     private String dbUrl;
 
 

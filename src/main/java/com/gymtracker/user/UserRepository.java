@@ -16,6 +16,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByLogin(String login);
 
     @Cacheable(cacheNames = "users")
+    Optional<User> findByEmailAddress(String email);
+
+    @Cacheable(cacheNames = "users")
     boolean existsByLoginOrEmailAddress(String login,
                                         String email);
 

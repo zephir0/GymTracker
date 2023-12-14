@@ -17,4 +17,5 @@ public interface TrainingRoutineRepository extends JpaRepository<TrainingRoutine
     @Query("SELECT DISTINCT tr FROM TrainingRoutine tr JOIN FETCH tr.exerciseList JOIN FETCH tr.user WHERE tr.user.id = :userId AND tr.isArchived = :isArchived")
     List<TrainingRoutine> findAllByUserIdAndArchived(@Param("userId") Long userId,
                                                      @Param("isArchived") boolean isArchived);
+
 }

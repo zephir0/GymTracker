@@ -44,7 +44,7 @@ public class TrainingRoutine {
     @NotNull
     private List<Exercise> exerciseList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "trainingRoutine")
+    @OneToMany(mappedBy = "trainingRoutine", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<TrainingSession> trainingSessionList = new ArrayList<>();
 
@@ -52,9 +52,11 @@ public class TrainingRoutine {
         exerciseList.add(exercise);
         exercise.getTrainingRoutines().add(this);
     }
-
-    public void removeExercise(Exercise exercise) {
-        exerciseList.remove(exercise);
-        exercise.getTrainingRoutines().remove(this);
+    @PreRemove
+    private void preRemove() {
+        for (Exercise exercise : exerciseList) {
+            exercise.getTrainingRoutines().remove(this);
+        }
     }
+
 }

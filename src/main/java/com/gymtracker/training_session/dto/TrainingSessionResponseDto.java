@@ -8,5 +8,4 @@ public record TrainingSessionResponseDto(Long id, String routineName,
                                          @JsonFormat(pattern = "dd-MM-yyyy")
                                          LocalDate trainingDate,
                                          Long totalWeight) {
-
 }

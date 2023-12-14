@@ -53,7 +53,7 @@ public class TrainingSessionServiceImpl implements TrainingSessionService {
         trainingSessionRepository.findById(trainingSessionId)
                 .map(this::verifyUserAuthorizedForTrainingSession)
                 .ifPresentOrElse(trainingSession -> {
-                    trainingSessionRepository.deleteById(trainingSessionId);
+                    trainingSessionRepository.deleteById(trainingSession.getId());
                 }, () -> {
                     throw new TrainingSessionNotFoundException("Training session doesn't exist.");
                 });

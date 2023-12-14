@@ -7,11 +7,13 @@ import com.gymtracker.user.entity.User;
 import java.util.Optional;
 
 public interface UserService {
-     Optional<UserLoginDto> getCredentialsByLogin(String login);
+    Optional<UserLoginDto> getCredentialsByLogin(String login);
 
-     User getLoggedUser();
+    User getLoggedUser();
 
-     UserResponseDto getDetailsOfLoggedUser();
+    void deleteAccount();
 
-     User getReference(Long userId);
+    UserResponseDto getDetailsOfLoggedUser();
+
+    User getReference(Long userId);
 }

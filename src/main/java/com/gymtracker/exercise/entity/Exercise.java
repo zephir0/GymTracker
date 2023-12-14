@@ -52,4 +52,11 @@ public class Exercise {
     @ManyToMany(mappedBy = "exerciseList")
     @JsonIgnore
     private List<TrainingRoutine> trainingRoutines = new ArrayList<>();
+
+    @PreRemove
+    private void preRemove() {
+        for (TrainingRoutine routine : trainingRoutines) {
+            routine.getExerciseList().remove(this);
+        }
+    }
 }

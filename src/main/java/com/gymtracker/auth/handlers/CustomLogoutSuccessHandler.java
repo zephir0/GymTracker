@@ -22,6 +22,7 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
             token = token.substring(7);
             jwtTokenStore.removeToken(token);
         }
+        authentication.setAuthenticated(false);
         response.getWriter().write("Logged out successfully");
         response.setStatus(HttpServletResponse.SC_OK);
     }

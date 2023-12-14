@@ -15,9 +15,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Cacheable(cacheNames = "users")
     Optional<User> findByLogin(String login);
 
-
     @Cacheable(cacheNames = "users")
-    boolean existsByLoginOrEmailAddress(String login, String email);
+    boolean existsByLoginOrEmailAddress(String login,
+                                        String email);
 
     @Override
     @CacheEvict(cacheNames = "users", allEntries = true)
@@ -26,4 +26,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Override
     @CacheEvict(cacheNames = "users", allEntries = true)
     <S extends User> S save(S entity);
+
 }
+

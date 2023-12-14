@@ -1,5 +1,8 @@
 package com.gymtracker.user.service;
 
+import com.gymtracker.exercise.ExerciseRepository;
+import com.gymtracker.training_routine.TrainingRoutine;
+import com.gymtracker.training_routine.TrainingRoutineRepository;
 import com.gymtracker.user.UserRepository;
 import com.gymtracker.user.dto.UserLoginDto;
 import com.gymtracker.user.dto.UserResponseDto;
@@ -12,6 +15,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -19,6 +24,8 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final TrainingRoutineRepository trainingRoutineRepository;
+    private final ExerciseRepository exerciseRepository;
 
 
     @Override
@@ -32,6 +39,14 @@ public class UserServiceImpl implements UserService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return Optional.of(authentication).filter(Authentication::isAuthenticated).map(Authentication::getName).flatMap(userRepository::findByLogin).orElseThrow(() -> new UserNotLoggedInException("User is not logged."));
     }
+
+    @Transactional
+    @Override
+    public void deleteAccount() {
+        User loggedUser = getLoggedUser();
+        userRepository.delete(loggedUser);
+    }
+
 
     @Override
     public UserResponseDto getDetailsOfLoggedUser() {

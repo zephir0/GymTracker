@@ -15,5 +15,12 @@
       <jdbc-url>jdbc:mysql://35.234.173.92:3306/gym_tracker</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="db_g128@mysql.mikr.us" uuid="d35dce65-cf86-4468-b4c6-6f79568845a9">
+      <driver-ref>mysql.8</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://mysql.mikr.us:3306/db_g128</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>

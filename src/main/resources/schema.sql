@@ -1,11 +1,11 @@
 CREATE TABLE `user`
 (
     `id`         bigint AUTO_INCREMENT PRIMARY KEY,
-    `email`      varchar(150) NOT NULL,
+    `email_address`      varchar(150) NOT NULL,
     `login`      varchar(150) NOT NULL,
     `password`   varchar(255) NOT NULL,
-    `role`       varchar(255) NOT NULL,
-    `created_at` timestamp    NOT NULL
+    `user_role`       varchar(255) NOT NULL,
+    `creation_date` timestamp    NOT NULL
 );
 
 CREATE TABLE `ticket`

@@ -9,12 +9,22 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
 @EnableCaching
 public interface TrainingSessionRepository extends JpaRepository<TrainingSession, Long> {
+    @Query("SELECT ts FROM TrainingSession ts " +
+            "WHERE ts.trainingRoutine.id = :trainingRoutineId " +
+            "AND ts.trainingDate = :trainingDate")
+    Optional<TrainingSession> findByTrainingRoutineIdAndTrainingDate(
+            @Param("trainingRoutineId") Long trainingRoutineId,
+            @Param("trainingDate") LocalDateTime trainingDate
+    );
+
     @Query("SELECT COUNT(ts) FROM TrainingSession ts WHERE ts.user = :user")
     Long countByUser(@Param("user") User user);
 

@@ -11,6 +11,7 @@ import org.springframework.cache.annotation.Cacheable;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -26,8 +27,8 @@ public class TrainingSession {
     private Long id;
 
     @Column(name = "training_date")
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate trainingDate;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime trainingDate;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

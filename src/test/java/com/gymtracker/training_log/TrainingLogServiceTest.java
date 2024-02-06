@@ -18,6 +18,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -51,7 +52,7 @@ public class TrainingLogServiceTest {
     public void setUp() {
         sessionId = 1L;
         trainingLogDto = new TrainingLogDto(10, 10, "1", 1L);
-        trainingSessionDto = new TrainingSessionDto(1L, Collections.singletonList(trainingLogDto));
+        trainingSessionDto = new TrainingSessionDto(1L, Collections.singletonList(trainingLogDto), LocalDateTime.now());
         trainingLog = new TrainingLog();
         trainingSession = new TrainingSession();
         user = new User();

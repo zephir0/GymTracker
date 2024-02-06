@@ -28,7 +28,6 @@ public class TrainingSessionMapperImpl implements TrainingSessionMapper {
 
         trainingSession.setTrainingRoutine(trainingRoutine);
 
-        trainingSession.setTrainingDate(LocalDate.now());
 
         return trainingSession;
     }

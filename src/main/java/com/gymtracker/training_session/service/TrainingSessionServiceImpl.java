@@ -34,17 +34,22 @@ public class TrainingSessionServiceImpl implements TrainingSessionService {
 
     @Override
     @Transactional
-    public void createTrainingSession(TrainingSessionDto trainingSessionDto) {
-
+    public TrainingSession createTrainingSession(TrainingSessionDto trainingSessionDto) {
+        User loggedUser = userService.getLoggedUser();
         TrainingRoutine trainingRoutine = trainingRoutineService.getTrainingRoutine(trainingSessionDto.trainingRoutineId());
 
-        TrainingSession trainingSession = trainingSessionMapper.toEntity(trainingRoutine, userService.getLoggedUser());
-
-        if (trainingSession.getUser().getId().equals(trainingSession.getTrainingRoutine().getUser().getId())) {
-            Long createdSessionId = trainingSessionRepository.save(trainingSession).getId();
-            trainingLogService.createTrainingLogs(trainingSessionDto.trainingLogDtoList(), createdSessionId);
-        } else
+        if (!loggedUser.getId().equals(trainingRoutine.getUser().getId())) {
             throw new UnauthorizedTrainingRoutineAccessException("You are not authorized to use that training routine");
+        }
+
+        TrainingSession trainingSession = new TrainingSession();
+        trainingSession.setUser(loggedUser);
+        trainingSession.setTrainingRoutine(trainingRoutine);
+        trainingSession.setTrainingDate(trainingSessionDto.trainingDate());
+        TrainingSession savedTrainingSession = trainingSessionRepository.save(trainingSession);
+        Long createdSessionId = savedTrainingSession.getId();
+        trainingLogService.createTrainingLogs(trainingSessionDto.trainingLogDtoList(), createdSessionId);
+        return savedTrainingSession;
     }
 
 
@@ -92,17 +97,19 @@ public class TrainingSessionServiceImpl implements TrainingSessionService {
         }).collect(Collectors.toList());
     }
 
-    private boolean isUserAuthorizedForTrainingSession(TrainingSession trainingSession) {
-        return userService.getLoggedUser().getUserRole().equals(UserRoles.ADMIN) || trainingSession.getUser().getId().equals(userService.getLoggedUser().getId());
-    }
 
-
-    private TrainingSession verifyUserAuthorizedForTrainingSession(TrainingSession trainingSession) {
+    public TrainingSession verifyUserAuthorizedForTrainingSession(TrainingSession trainingSession) {
         if (isUserAuthorizedForTrainingSession(trainingSession)) {
             return trainingSession;
         } else
             throw new UnauthorizedTrainingSessionAccessException("You are not authorized to access that training session.");
     }
 
+    private boolean isUserAuthorizedForTrainingSession(TrainingSession trainingSession) {
+        return userService.getLoggedUser().getUserRole().equals(UserRoles.ADMIN) || trainingSession.getUser().getId().equals(userService.getLoggedUser().getId());
+    }
 
 }
+
+
+

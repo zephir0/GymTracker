@@ -20,6 +20,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -70,7 +71,7 @@ public class TrainingSessionServiceTest {
         trainingSession.setUser(user);
         trainingSession.setId(1L);
 
-        trainingSessionDto = new TrainingSessionDto(trainingRoutineId, new ArrayList<>());
+        trainingSessionDto = new TrainingSessionDto(trainingRoutineId, new ArrayList<>(), LocalDateTime.now());
 
     }
 
@@ -78,17 +79,29 @@ public class TrainingSessionServiceTest {
     public void testCreateTrainingSession_Success() {
         // Arrange
         when(userService.getLoggedUser()).thenReturn(user);
-        when(trainingSessionMapper.toEntity(trainingRoutine, user)).thenReturn(trainingSession);
-        when(trainingSessionRepository.save(trainingSession)).thenReturn(trainingSession);
-        when(trainingRoutineService.getTrainingRoutine(any())).thenReturn(trainingRoutine);
+
+        Long trainingRoutineId = 1L;
+        trainingRoutine.setId(trainingRoutineId);
+
+        TrainingSessionDto trainingSessionDto = new TrainingSessionDto(trainingRoutineId, new ArrayList<>(), LocalDateTime.now());
+
+        when(trainingRoutineService.getTrainingRoutine(trainingRoutineId)).thenReturn(trainingRoutine);
+        when(trainingSessionRepository.save(any(TrainingSession.class))).thenAnswer(invocation -> {
+            TrainingSession createdSession = invocation.getArgument(0);
+            createdSession.setId(1L);  // Assuming the ID assigned during save
+            return createdSession;
+        });
+
         // Act
-        trainingSessionService.createTrainingSession(trainingSessionDto);
+        TrainingSession result = trainingSessionService.createTrainingSession(trainingSessionDto);
 
         // Assert
-        verify(trainingSessionRepository, times(1)).save(trainingSession);
-        verify(trainingLogService, times(1)).createTrainingLogs(eq(trainingSessionDto.trainingLogDtoList()), any());
+        assertNotNull(result);
+        assertEquals(user, result.getUser());
+        assertEquals(trainingRoutine, result.getTrainingRoutine());
+        assertEquals(trainingSessionDto.trainingDate(), result.getTrainingDate());
+        verify(trainingLogService, times(1)).createTrainingLogs(eq(trainingSessionDto.trainingLogDtoList()), anyLong());
     }
-
 
     @Test(expected = UnauthorizedTrainingRoutineAccessException.class)
     public void testCreateTrainingSession_Unauthorized() {
@@ -96,7 +109,6 @@ public class TrainingSessionServiceTest {
         trainingRoutine.setUser(unauthorizedUser);
 
         when(userService.getLoggedUser()).thenReturn(user);
-        when(trainingSessionMapper.toEntity(trainingRoutine, user)).thenReturn(trainingSession);
         when(trainingRoutineService.getTrainingRoutine(any())).thenReturn(trainingRoutine);
 
 
@@ -137,7 +149,7 @@ public class TrainingSessionServiceTest {
         user.setUserRole(UserRoles.USER);
         when(trainingSessionRepository.findById(trainingSession.getId())).thenReturn(Optional.of(trainingSession));
         when(userService.getLoggedUser()).thenReturn(user);
-        when(trainingSessionMapper.toDto(trainingSession)).thenReturn(new TrainingSessionResponseDto(1L, "TestRoutineName", LocalDate.now(), 1029L));
+        when(trainingSessionMapper.toDto(trainingSession)).thenReturn(new TrainingSessionResponseDto(1L, "TestRoutineName", LocalDateTime.now(), 1029L));
 
         // Act
         trainingSessionService.getTrainingSessionDtoById(trainingSession.getId());

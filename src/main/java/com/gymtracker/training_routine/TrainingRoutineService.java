@@ -33,7 +33,7 @@ public class TrainingRoutineService {
 
     public TrainingRoutine getTrainingRoutine(Long trainingRoutineId) {
         return trainingRoutineRepository.findByTrainingRoutineId(trainingRoutineId)
-                .map(this::verifyUserAuthorizedForTrainingRoutine)
+//                .map(this::verifyUserAuthorizedForTrainingRoutine)
                 .orElseThrow(
                         () -> new TrainingRoutineNotFoundException("Training routine doesn't exist.")
                 );

@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface TrainingSessionService {
-    void createTrainingSession(TrainingSessionDto trainingSessionDto);
+    TrainingSession createTrainingSession(TrainingSessionDto trainingSessionDto);
 
     void deleteTrainingSession(Long trainingSessionId);
 
@@ -16,6 +16,7 @@ public interface TrainingSessionService {
 
     Optional<TrainingSession> getTrainingSessionById(Long trainingSessionId);
 
+    TrainingSession verifyUserAuthorizedForTrainingSession(TrainingSession trainingSession);
 
     List<TrainingSessionResponseDto> getAllTrainingSessionsForLoggedUser();
 

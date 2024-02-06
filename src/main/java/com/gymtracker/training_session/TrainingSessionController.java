@@ -1,9 +1,10 @@
 package com.gymtracker.training_session;
 
+import com.gymtracker.response_model.SuccessResponse;
 import com.gymtracker.training_session.dto.TrainingSessionDto;
 import com.gymtracker.training_session.dto.TrainingSessionResponseDto;
 import com.gymtracker.training_session.service.TrainingSessionService;
-import com.gymtracker.response_model.SuccessResponse;
+import com.gymtracker.training_session.service.TrainingSessionSyncService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import java.util.List;
 @Api(tags = "Training Session API")
 public class TrainingSessionController {
     private final TrainingSessionService trainingSessionService;
+    private final TrainingSessionSyncService trainingSessionSyncService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -28,6 +30,12 @@ public class TrainingSessionController {
     SuccessResponse createTrainingSession(@RequestBody @Validated TrainingSessionDto trainingSessionDto) {
         trainingSessionService.createTrainingSession(trainingSessionDto);
         return new SuccessResponse(HttpStatus.CREATED, "Training session has been created", LocalDateTime.now());
+    }
+
+    @PutMapping("/synchronize")
+    public SuccessResponse synchronizeTrainingSessions(@RequestBody List<TrainingSessionDto> trainingSessionDtoList) {
+        trainingSessionSyncService.synchronizeTrainingSessions(trainingSessionDtoList);
+        return new SuccessResponse(HttpStatus.OK, "Training sessions has been synchronized with the local device status.", LocalDateTime.now());
     }
 
     @DeleteMapping("/{trainingSessionId}")

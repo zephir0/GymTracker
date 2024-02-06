@@ -1,0 +1,21 @@
+version: '3'
+services:
+  app:
+    image: krystianzc/gym_tracker_server
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+    ports:
+      - "20183:20183"
+    depends_on:
+      - mysql
+    command: ["./wait-for-mysql.sh", "mysql:3306", "--", "java", "-jar", "app.jar"]
+
+  mysql:
+    image: mysql:8.0.30
+    environment:
+      MYSQL_ROOT_PASSWORD: 6AB8_06caa2
+      MYSQL_DATABASE: db_g128
+      MYSQL_USER: g128
+      MYSQL_PASSWORD: 6AB8_06caa2
+    ports:
+      - "3306:3306"
